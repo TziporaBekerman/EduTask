@@ -1,0 +1,164 @@
+const userModel = require("../models/userModel");
+
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await userModel.getAllUsers();
+
+    return res.status(200).json({
+      success: true,
+      users
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await userModel.getUserById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      user
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+const createUser = async (req, res) => {
+  try {
+    const { id, name, email, password, role, groupId } = req.body;
+
+    if (!id || !name || !email || !password || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields"
+      });
+    }
+
+    const existingById = await userModel.getUserById(id);
+    if (existingById) {
+      return res.status(409).json({
+        success: false,
+        message: "ID already exists"
+      });
+    }
+
+    const existingByEmail = await userModel.getUserByEmail(email);
+    if (existingByEmail) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already exists"
+      });
+    }
+
+    if (role === "student" && groupId == null) {
+      return res.status(400).json({
+        success: false,
+        message: "Student must belong to a group"
+      });
+    }
+
+    const newUser = await userModel.createUser({
+      id,
+      name,
+      email,
+      password,
+      role,
+      groupId
+    });
+
+    return res.status(201).json({
+      success: true,
+      user: newUser
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await userModel.getUserById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    await userModel.updateUser(id, req.body);
+
+    return res.status(200).json({
+      success: true,
+      message: "User updated"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await userModel.getUserById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    await userModel.deleteUser(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "User deleted"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+module.exports = {
+  getAllUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser
+};
