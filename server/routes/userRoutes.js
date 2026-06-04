@@ -3,6 +3,12 @@ const router = express.Router();
 // const { verifyToken } = require("../middleware/auth");
 const userController = require("../controllers/userController");
 
+// קבלת פרופיל עצמי
+router.get("/me", /* verifyToken, */ userController.getMe);
+
+// עדכון פרופיל עצמי
+router.put("/me", /* verifyToken, */ userController.updateMe);
+
 // קבלת כל המשתמשים
 router.get("/", /* verifyToken, */ userController.getAllUsers);
 
