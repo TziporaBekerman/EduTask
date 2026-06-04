@@ -90,7 +90,7 @@ const gradeSubmission = async (
     [grade, lecturerComment, id]
   );
 
-  return true;
+  return await getSubmissionById(id);
 };
 
 // מחיקת הגשה
@@ -100,7 +100,20 @@ const deleteSubmission = async (id) => {
     [id]
   );
 
-  return true;
+  return await getSubmissionById(id);
+};
+const updateSubmission = async (id, data) => {
+  const { filePath, studentComment } = data;
+
+  await db.query(
+    `UPDATE Submissions
+     SET filePath = ?,
+         studentComment = ?
+     WHERE id = ?`,
+    [filePath, studentComment, id]
+  );
+
+  return await getSubmissionById(id);
 };
 
 module.exports = {
@@ -110,5 +123,6 @@ module.exports = {
   getSubmissionsByStudent,
   getSubmissionsByAssignment,
   gradeSubmission,
-  deleteSubmission
+  deleteSubmission,
+  updateSubmission
 };
