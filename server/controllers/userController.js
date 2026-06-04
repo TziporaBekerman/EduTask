@@ -1,5 +1,48 @@
 const userModel = require("../models/userModel");
 
+const updateMyProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email } = req.body;
+
+    const user = await userModel.getUserById(id);
+
+    await userModel.updateMyProfile(id, {
+      name,
+      email
+    });
+
+    return res.status(200).json({
+      message: "Profile updated successfully"
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Server error"
+    });
+  }
+};
+
+const getMyProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await userModel.getUserById(id);
+
+    return res.status(200).json(user);
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Server error"
+    });
+  }
+};
+
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await userModel.getAllUsers();
@@ -160,5 +203,7 @@ module.exports = {
   getUserById,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  getMyProfile,
+  updateMyProfile
 };
