@@ -1,27 +1,37 @@
 const express = require("express");
 const router = express.Router();
-// const { verifyToken } = require("../middleware/auth");
-const submissionController = require("../controllers/submissionController");
+const { verifyToken, authorizeRole } = require("../middlewares/authMiddleware");
+const submissionController = require("../controllers/submissionsController");
 
-// קבלת כל ההגשות (אדמין/מרצה)
-router.get("/", /* verifyToken, */ submissionController.getAllSubmissions);
+// אדמין מקבל את כל ההגשות, מרצה מקבל רק את ההגשות של התלמידים שלו
+router.get("/", verifyToken, authorizeRole("admin", "lecturer"), submissionController.getAllSubmissions);
 
-// קבלת הגשה לפי ID
-router.get("/:id", /* verifyToken, */ submissionController.getSubmissionById);
+// סטודנט מקבל את כל ההגשות שלו עצמו
+router.get("/my", verifyToken, authorizeRole("student"), submissionController.getMySubmissions);
 
-// יצירת/עדכון הגשה (סטודנט)
-router.post("/", /* verifyToken, */ submissionController.createOrUpdateSubmission);
+// אדמין או מרצה מקבל פרטי הגשה ספציפית לפי ID
+router.get("/:id", verifyToken, authorizeRole("admin", "lecturer"), submissionController.getSubmissionById);
 
-// מחיקת הגשה
-router.delete("/:id", /* verifyToken, */ submissionController.deleteSubmission);
+// סטודנט מגיש מטלה חדשה
+router.post("/", verifyToken, authorizeRole("student"), submissionController.createSubmission);
 
-// בדיקת הגשה - מתן ציון והערות (מרצה/אדמין)
-router.put("/:id/grade", /* verifyToken, */ submissionController.gradeSubmission);
+// סטודנט מעדכן הגשה קיימת (לא ניתן אם כבר נבדקה)
+router.put("/:id", verifyToken, authorizeRole("student"), submissionController.updateSubmission);
 
-// קבלת כל ההגשות של סטודנט מסוים
-router.get("/student/:studentId", /* verifyToken, */ submissionController.getSubmissionsByStudent);
+// אדמין מוחק הגשה מהמערכת
+router.delete("/:id", verifyToken, authorizeRole("admin"), submissionController.deleteSubmission);
 
-// קבלת כל ההגשות של מטלה מסוימת
-router.get("/assignment/:assignmentId", /* verifyToken, */ submissionController.getSubmissionsByAssignment);
+// מרצה או אדמין נותן ציון והערה להגשה
+router.put("/:id/grade", verifyToken, authorizeRole("admin", "lecturer"), submissionController.gradeSubmission);
+
+// אדמין או מרצה מקבל את כל ההגשות של סטודנט מסוים לפי ID
+router.get("/student/:studentId", verifyToken, authorizeRole("admin", "lecturer"), submissionController.getSubmissionsByStudent);
+
+// אדמין או מרצה מקבל את כל ההגשות שעדיין לא נבדקו
+router.get("/pending", verifyToken, authorizeRole("admin", "lecturer"), submissionController.getPendingSubmissions);
+
+// אדמין או מרצה מקבל את כל ההגשות שנבדקו וקיבלו ציון
+router.get("/graded", verifyToken, authorizeRole("admin", "lecturer"), submissionController.getGradedSubmissions);
+
 
 module.exports = router;
