@@ -3,14 +3,8 @@ const router = express.Router();
 const { verifyToken, authorizeRole } = require("../middlewares/authMiddleware");
 const assignmentController = require("../controllers/assignmentController");
 
-// אדמין מקבל את כל המטלות, מרצה מקבל את המטלות שלו, סטודנט מקבל מטלות של הקבוצה שלו
+// אדמין רואה הכל, מרצה רואה את המטלות שלו, סטודנט רואה מטלות של הקבוצה שלו
 router.get("/", verifyToken, assignmentController.getAllAssignments);
-
-// קבלת כל המטלות הפתוחות כרגע להגשה
-router.get("/open", verifyToken, assignmentController.getOpenAssignments);
-
-// קבלת כל המטלות שמועד הגשתן עבר
-router.get("/closed", verifyToken, assignmentController.getClosedAssignments);
 
 // קבלת פרטי מטלה ספציפית לפי ID
 router.get("/:id", verifyToken, assignmentController.getAssignmentById);
@@ -26,5 +20,6 @@ router.put("/:id", verifyToken, authorizeRole("admin"), assignmentController.upd
 
 // אדמין מוחק מטלה מהמערכת
 router.delete("/:id", verifyToken, authorizeRole("admin"), assignmentController.deleteAssignment);
+
 
 module.exports = router;
