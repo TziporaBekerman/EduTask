@@ -72,6 +72,12 @@ const getUserById = async (req, res) => {
         message: "User not found"
       });
     }
+    if (req.user.role === "lecturer") {
+      const isMyStudent = await userModel.isStudentOfLecturer(req.user.id, user.groupId);
+      if (!isMyStudent) {
+        return res.status(403).json({ success: false, message: "Access denied" });
+      }
+    }
 
     return res.status(200).json({
       success: true,
@@ -198,6 +204,16 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const getMyStudents = async (req, res) => {
+  try {
+    const students = await userModel.getStudentsByLecturer(req.user.id);
+    return res.status(200).json({ success: true, students });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -205,5 +221,6 @@ module.exports = {
   updateUser,
   deleteUser,
   getMyProfile,
-  updateMyProfile
+  updateMyProfile,
+  getMyStudents
 };

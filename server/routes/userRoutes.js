@@ -1,28 +1,23 @@
 const express = require("express");
 const router = express.Router();
-// const { verifyToken } = require("../middleware/auth");
+const { verifyToken, authorizeRole } = require("../middlewares/authMiddleware");
 const userController = require("../controllers/userController");
 
-// קבלת פרופיל עצמי
-router.get("/me", /* verifyToken, */ userController.getMe);
+router.get("/me",verifyToken, userController.getMe);
 
-// עדכון פרופיל עצמי
-router.put("/me", /* verifyToken, */ userController.updateMe);
+router.put("/me", verifyToken,  userController.updateMe);
 
-// קבלת כל המשתמשים
-router.get("/", /* verifyToken, */ userController.getAllUsers);
+router.get("/",  verifyToken,authorizeRole("admin"), userController.getAllUsers);
 
-// קבלת משתמש לפי ID
-router.get("/:id", /* verifyToken, */ userController.getUserById);
+router.get("/my-students", verifyToken, authorizeRole("lecturer"), userController.getMyStudents);
 
-// יצירת משתמש (אדמין)
-router.post("/", /* verifyToken, */ userController.createUser);
+router.get("/:id",  verifyToken,authorizeRole("admin","lecturer"),  userController.getUserById);
 
-// עדכון משתמש (אדמין)
-router.put("/:id", /* verifyToken, */ userController.updateUser);
+router.post("/", verifyToken, authorizeRole("admin"), userController.createUser);
 
-// מחיקת משתמש (אדמין)
-router.delete("/:id", /* verifyToken, */ userController.deleteUser);
+router.put("/:id", verifyToken, authorizeRole("admin"), userController.updateUser);
+
+router.delete("/:id", verifyToken, authorizeRole("admin"), userController.deleteUser);
 
 
 

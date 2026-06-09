@@ -75,11 +75,36 @@ const deleteUser = async (id) => {
   return true;
 };
 
+const isStudentOfLecturer = async (lecturerId, groupId) => {
+  const [rows] = await db.query(
+    `SELECT COUNT(*) AS count FROM Assignments
+     WHERE lecturerId = ? AND groupId = ?`,
+    [lecturerId, groupId]
+  );
+  return rows[0].count > 0;
+};
+
+const getStudentsByLecturer = async (lecturerId) => {
+  const [rows] = await db.query(
+    `SELECT DISTINCT u.id, u.name, u.email, u.groupId
+     FROM Users u
+     JOIN Assignments a ON a.groupId = u.groupId
+     WHERE a.lecturerId = ? AND u.role = 'student'`,
+    [lecturerId]
+  );
+  return rows;
+};
+
+
+
 module.exports = {
   getAllUsers,
   getUserById,
   getUserByEmail,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  isStudentOfLecturer,
+  updateMyProfile,
+  getStudentsByLecturer
 };
