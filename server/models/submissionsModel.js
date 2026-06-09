@@ -116,12 +116,24 @@ const updateSubmission = async (id, data) => {
   return await getSubmissionById(id);
 };
 
+// הגשות של תלמידים של מרצה
+const getSubmissionsByLecturer = async (lecturerId) => {
+  const [rows] = await db.query(
+    `SELECT s.* FROM Submissions s
+     JOIN Assignments a ON a.id = s.assignmentId
+     WHERE a.lecturerId = ?`,
+    [lecturerId]
+  );
+  return rows;
+};
+
 module.exports = {
   createSubmission,
   getAllSubmissions,
   getSubmissionById,
   getSubmissionsByStudent,
   getSubmissionsByAssignment,
+  getSubmissionsByLecturer,
   gradeSubmission,
   deleteSubmission,
   updateSubmission

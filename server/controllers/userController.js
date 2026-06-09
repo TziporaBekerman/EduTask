@@ -45,7 +45,9 @@ const getMyProfile = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await userModel.getAllUsers();
+    const users = req.user.role === "admin"
+      ? await userModel.getAllUsers()
+      : await userModel.getStudentsByLecturer(req.user.id);
 
     return res.status(200).json({
       success: true,
@@ -204,16 +206,6 @@ const deleteUser = async (req, res) => {
   }
 };
 
-const getMyStudents = async (req, res) => {
-  try {
-    const students = await userModel.getStudentsByLecturer(req.user.id);
-    return res.status(200).json({ success: true, students });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: "Server error" });
-  }
-};
-
-
 module.exports = {
   getAllUsers,
   getUserById,
@@ -221,6 +213,5 @@ module.exports = {
   updateUser,
   deleteUser,
   getMyProfile,
-  updateMyProfile,
-  getMyStudents
+  updateMyProfile
 };
