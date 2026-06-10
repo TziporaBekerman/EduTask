@@ -86,11 +86,21 @@ const deleteAssignment = async (id) => {
   return true;
 };
 
+const getAssignmentsByLecturer = async (lecturerId) => {
+  const [rows] = await db.query(
+    "SELECT * FROM Assignments WHERE lecturerId = ?",
+    [lecturerId]
+  );
+  return rows;
+};
+
+
 module.exports = {
   createAssignment,
   getAllAssignments,
   getAssignmentById,
   getAssignmentsByGroup,
   updateAssignment,
-  deleteAssignment
+  deleteAssignment,
+  getAssignmentsByLecturer
 };

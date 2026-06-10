@@ -1,5 +1,5 @@
 const express = require('express');
-const db = require('./config/db'); // ייבוא קובץ החיבור
+const db = require('./database/db.js');
 const cors = require("cors");
 
 const app = express();

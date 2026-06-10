@@ -4,10 +4,10 @@ const { verifyToken, authorizeRole } = require("../middlewares/authMiddleware");
 const userController = require("../controllers/userController");
 
 // המשתמש המחובר מקבל את פרטי הפרופיל שלו
-router.get("/me", verifyToken, userController.getMe);
+router.get("/me", verifyToken, userController.getAllUsers);
 
 // המשתמש המחובר מעדכן את פרטי הפרופיל שלו
-router.put("/me", verifyToken, userController.updateMe);
+router.put("/me", verifyToken, userController.updateMyProfile);
 
 // אדמין מקבל את כל המשתמשים, מרצה מקבל רק את התלמידים שלו
 router.get("/", verifyToken, authorizeRole("admin", "lecturer"), userController.getAllUsers);

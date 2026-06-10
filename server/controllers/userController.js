@@ -2,7 +2,7 @@ const userModel = require("../models/userModel");
 
 const updateMyProfile = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.user.id;
     const { name, email } = req.body;
 
     const user = await userModel.getUserById(id);
@@ -27,7 +27,7 @@ const updateMyProfile = async (req, res) => {
 
 const getMyProfile = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.user.id;
 
     const user = await userModel.getUserById(id);
 
