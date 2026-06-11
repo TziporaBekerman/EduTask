@@ -1,4 +1,4 @@
-const db = require("../db/connection");
+const db = require("../database/db");
 
 // יצירת הגשה
 const createSubmission = async (submission) => {

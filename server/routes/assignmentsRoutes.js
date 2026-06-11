@@ -5,7 +5,8 @@ const assignmentController = require("../controllers/assignmentController");
 
 // אדמין רואה הכל, מרצה רואה את המטלות שלו, סטודנט רואה מטלות של הקבוצה שלו
 router.get("/", verifyToken, assignmentController.getAllAssignments);
-
+// אחרי השינוי (זמני לבדיקה!)
+// router.get("/", assignmentController.getAllAssignments);
 // קבלת פרטי מטלה ספציפית לפי ID
 router.get("/:id", verifyToken, assignmentController.getAssignmentById);
 

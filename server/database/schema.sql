@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS EduTask;
-CREATE DATABASE EduTask;
-USE EduTask;
+DROP DATABASE IF EXISTS assignment_system;
+CREATE DATABASE assignment_system;
+USE assignment_system;
 
 -- GROUPS
 CREATE TABLE StudentGroups (
