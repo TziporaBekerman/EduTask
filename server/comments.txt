@@ -7,3 +7,6 @@
 
 gradeSubmission קיים בקונטרולר אבל לא מוגדר בראוטס
 הפונקציה קיימת ב-submissionsController אבל אין לה route ב-submissionsRoutes — אי אפשר לקרוא לה.
+
+
+כדאי לבדוק בוספת מידלור של שגיאות.
