@@ -5,10 +5,10 @@ import Errors from "../common/Errors";
 import Input from "../common/Input";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [showError, setShowError] = useState("");
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const validateInput = () => {
     if (!formData.email || !formData.password) {
@@ -30,16 +30,22 @@ export default function Login() {
     setLoading(true);
     try {
       const result = await login(formData.email, formData.password);
+
       if (!result.token) {
         setShowError(result.message || "שם משתמש או סיסמה שגויים");
         return;
       }
+
       localStorage.setItem("token", result.token);
-      if (result.role === "admin") navigate("/admin");
-      else if (result.role === "lecturer") navigate("/lecturer");
+
+      const payload = JSON.parse(atob(result.token.split(".")[1]));
+
+      if (payload.role === "admin") navigate("/admin");
+      else if (payload.role === "lecturer") navigate("/lecturer");
       else navigate("/student");
+
     } catch (err) {
-      setShowError("שגיאה בהתחברות");
+      setShowError(err.message || "שגיאה בהתחברות");
     } finally {
       setLoading(false);
     }
