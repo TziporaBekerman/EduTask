@@ -1,9 +1,8 @@
- getSubmissionsByStudent ו-getSubmissionsByAssignment קיימים בקונטרולר אבל לא בראוטס
+getSubmissionsByStudent ו-getSubmissionsByAssignment קיימים בקונטרולר אבל לא בראוטס
 
 בכוטרולר של ריפורט אני צריכה לבדוק את הקריאות למודל למה הם של סבמישנס
 
 לא טיפלנו עדיין בראוטס וקונטרולר של סבמישנס
-
 
 gradeSubmission קיים בקונטרולר אבל לא מוגדר בראוטס
 הפונקציה קיימת ב-submissionsController אבל אין לה route ב-submissionsRoutes — אי אפשר לקרוא לה.
