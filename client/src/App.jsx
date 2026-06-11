@@ -26,16 +26,16 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        <Route element={<ProtectedRoute allowedRoles={["admin"]} user={user} />}>
+        {/* <Route element={<ProtectedRoute allowedRoles={["admin"]} user={user} />}> */}
           <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Navigate to="users" replace />} />
+            <Route index element={<Navigate to="reports" replace />} />
             <Route path="users" element={<ManageUsers />} />
             <Route path="groups" element={<ManageGroups />} />
             <Route path="assignments" element={<ManageAssignments />} />
             <Route path="submissions" element={<ManageSubmissions />} />
             <Route path="reports" element={<Reports />} />
           </Route>
-        </Route>
+        {/* </Route> */}
 
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
