@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import Errors from '../common/Errors';
 import Input from '../common/Input';
+import { login } from '../API//authApi';
 
 function Login() {
+  const navigate = useNavigate();
   const [showError, setShowError] = useState('');
   const [formData, setFormData] = useState({
     userMail: '',
@@ -13,7 +15,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setShowError("");
     if (!validateInput()) {
       return;
     }
@@ -25,11 +27,18 @@ function Login() {
 
       localStorage.setItem("token", result.token);
 
-      // כאן אפשר לבצע navigate
-      // navigate("/dashboard");
+      const payload = JSON.parse(atob(result.token.split('.')[1]));
+
+      if (payload.role === "admin") {
+        navigate("/admin");
+      } else if (payload.role === "lecturer") {
+        navigate("/lecturer");
+      } else {
+        navigate("/student");
+      }
 
     } catch (err) {
-      setError(err.message || "Login failed");
+      setShowError(err.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -50,7 +59,7 @@ function Login() {
     <div className="login-container">
       <h1 className="login-title">התחברות</h1>
       <form className="login-form">
-        <Input name='username' data={formData} setData={setFormData} placeholder='שם משתמש' />
+        <Input name='userMail' data={formData} setData={setFormData} placeholder='מייל' />
         <Input name='password' type='password' data={formData} setData={setFormData} placeholder='סיסמה' />
         <button type="button" className="login-button" onClick={handleSubmit}>התחברות</button>
       </form>
