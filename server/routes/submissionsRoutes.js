@@ -16,6 +16,9 @@ router.get("/:id", verifyToken, authorizeRole("admin", "lecturer"), submissionCo
 // סטודנט מגיש מטלה חדשה
 router.post("/", verifyToken, authorizeRole("student"), submissionController.createSubmission);
 
+// מרצה או אדמין נותן ציון והערה להגשה
+router.put("/:id/grade", verifyToken, authorizeRole("admin", "lecturer"), submissionController.gradeSubmission);
+
 // סטודנט מעדכן הגשה קיימת (לא ניתן אם כבר נבדקה)
 // אדמין או מרצה יכולים לשלוח grade ו lecturerComment בתוך ה body
 router.put("/:id", verifyToken, submissionController.updateSubmission);
