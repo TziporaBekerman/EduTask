@@ -41,11 +41,11 @@ export default function ManageSubmissions() {
   const statusLabel = { unsubmitted: "לא הוגש", submitted: "הוגש", checked: "נבדק", late: "באיחור" };
 
   return (
-    <div className="admin-page">
+    <div className="page">
       <h2>הגשות וציונים</h2>
 
       {selectedId && (
-        <form className="admin-form" onSubmit={handleGrade}>
+        <form className="data-form" onSubmit={handleGrade}>
           <h3>מתן ציון</h3>
           <input
             type="number" min="0" max="100"
@@ -67,7 +67,7 @@ export default function ManageSubmissions() {
         </form>
       )}
 
-      <table className="admin-table">
+      <table className="data-table">
         <thead>
           <tr><th>סטודנט</th><th>מטלה</th><th>תאריך הגשה</th><th>סטטוס</th><th>ציון</th><th>פעולות</th></tr>
         </thead>

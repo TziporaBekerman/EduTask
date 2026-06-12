@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAllAssignments, createAssignment, updateAssignment, deleteAssignment } from "../../API/assignmentsApi";
-import { get } from "../../API/apiClient";
+import { getAllGroups } from "../../API/groupsApi";
+import { getAllUsers } from "../../API/usersApi";
 
 const emptyForm = { title: "", description: "", groupId: "", lecturerId: "", openDate: "", closeDate: "" };
 
@@ -24,12 +25,12 @@ export default function ManageAssignments() {
   };
 
   const fetchGroups = async () => {
-    const res = await get("/groups");
+    const res = await getAllGroups();
     if (res.success) setGroups(res.groups);
   };
 
   const fetchLecturers = async () => {
-    const res = await get("/users");
+    const res = await getAllUsers();
     if (res.success) setLecturers(res.users.filter((u) => u.role === "lecturer"));
   };
 
@@ -70,10 +71,10 @@ export default function ManageAssignments() {
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   return (
-    <div className="admin-page">
+    <div className="page">
       <h2>ניהול מטלות</h2>
 
-      <form className="admin-form" onSubmit={handleSubmit}>
+      <form className="data-form" onSubmit={handleSubmit}>
         <h3>{editId ? "עריכת מטלה" : "הוספת מטלה"}</h3>
         <input name="title" placeholder="כותרת" value={form.title} onChange={handleChange} required />
         <textarea name="description" placeholder="תיאור" value={form.description} onChange={handleChange} />
@@ -98,7 +99,7 @@ export default function ManageAssignments() {
         </div>
       </form>
 
-      <table className="admin-table">
+      <table className="data-table">
         <thead>
           <tr><th>כותרת</th><th>קבוצה</th><th>פתיחה</th><th>סגירה</th><th>פעולות</th></tr>
         </thead>

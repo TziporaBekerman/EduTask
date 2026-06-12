@@ -8,6 +8,7 @@ import ManageGroups from "./pages/admin/ManageGroups";
 import ManageAssignments from "./pages/admin/ManageAssignments";
 import ManageSubmissions from "./pages/admin/ManageSubmissions";
 import Reports from "./pages/admin/Reports";
+import AdminHome from "./pages/admin/AdminHome";
 import StudentLayout from "./pages/student/StudentLayout";
 import StudentHome from "./pages/student/StudentHome";
 import StudentAssignments from "./pages/student/StudentAssignments";
@@ -36,7 +37,8 @@ function App() {
 
         <Route element={<ProtectedRoute allowedRoles={["admin"]} user={user} />}>
           <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Navigate to="reports" replace />} />
+            <Route index element={<Navigate to="home" replace />} />
+            <Route path="home" element={<AdminHome />} />
             <Route path="users" element={<ManageUsers />} />
             <Route path="groups" element={<ManageGroups />} />
             <Route path="assignments" element={<ManageAssignments />} />

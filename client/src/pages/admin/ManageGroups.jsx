@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { get, post, put, del } from "../../API/apiClient";
 import { getAllUsers, updateUser } from "../../API/usersApi";
+import { getAllGroups, createGroup, updateGroup, deleteGroup } from "../../API/groupsApi";
 
 export default function ManageGroups() {
   const [groups, setGroups] = useState([]);
@@ -12,7 +12,7 @@ export default function ManageGroups() {
   useEffect(() => { fetchGroups(); fetchUsers(); }, []);
 
   const fetchGroups = async () => {
-    const res = await get("/groups");
+    const res = await getAllGroups();
     if (res.success) setGroups(res.groups);
   };
 
@@ -25,8 +25,8 @@ export default function ManageGroups() {
     e.preventDefault();
     setError("");
     const res = editId
-      ? await put(`/groups/${editId}`, { name: groupName })
-      : await post("/groups", { name: groupName });
+      ? await updateGroup(editId, { name: groupName })
+      : await createGroup({ name: groupName });
 
     if (res.success) {
       setGroupName("");
@@ -39,7 +39,7 @@ export default function ManageGroups() {
 
   const handleDelete = async (id) => {
     if (!confirm("האם למחוק קבוצה זו?")) return;
-    const res = await del(`/groups/${id}`);
+    const res = await deleteGroup(id);
     if (res.success) fetchGroups();
   };
 
@@ -49,10 +49,10 @@ export default function ManageGroups() {
   };
 
   return (
-    <div className="admin-page">
+    <div className="page">
       <h2>ניהול קבוצות</h2>
 
-      <form className="admin-form" onSubmit={handleSubmit}>
+      <form className="data-form" onSubmit={handleSubmit}>
         <h3>{editId ? "עריכת קבוצה" : "הוספת קבוצה"}</h3>
         <input placeholder="שם קבוצה" value={groupName} onChange={(e) => setGroupName(e.target.value)} required />
         {error && <p className="form-error">{error}</p>}
@@ -62,7 +62,7 @@ export default function ManageGroups() {
         </div>
       </form>
 
-      <table className="admin-table">
+      <table className="data-table">
         <thead>
           <tr><th>מזהה</th><th>שם קבוצה</th><th>פעולות</th></tr>
         </thead>
@@ -81,7 +81,7 @@ export default function ManageGroups() {
       </table>
 
       <h3>שיוך סטודנטים לקבוצות</h3>
-      <table className="admin-table">
+      <table className="data-table">
         <thead>
           <tr><th>שם</th><th>אימייל</th><th>קבוצה נוכחית</th><th>שנה קבוצה</th></tr>
         </thead>

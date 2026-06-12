@@ -46,10 +46,10 @@ export default function ManageUsers() {
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   return (
-    <div className="admin-page">
+    <div className="page">
       <h2>ניהול משתמשים</h2>
 
-      <form className="admin-form" onSubmit={handleSubmit}>
+      <form className="data-form" onSubmit={handleSubmit}>
         <h3>{editId ? "עריכת משתמש" : "הוספת משתמש"}</h3>
         {!editId && <input name="id" placeholder="ת.ז / מספר עובד" value={form.id} onChange={handleChange} required />}
         <input name="name" placeholder="שם מלא" value={form.name} onChange={handleChange} required />
@@ -68,7 +68,7 @@ export default function ManageUsers() {
         </div>
       </form>
 
-      <table className="admin-table">
+      <table className="data-table">
         <thead>
           <tr>
             <th>ת.ז</th><th>שם</th><th>אימייל</th><th>תפקיד</th><th>קבוצה</th><th>פעולות</th>

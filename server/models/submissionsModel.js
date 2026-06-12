@@ -58,7 +58,10 @@ const getSubmissionById = async (id) => {
 // הגשות של סטודנט
 const getSubmissionsByStudent = async (studentId) => {
   const [rows] = await db.query(
-    "SELECT * FROM Submissions WHERE studentId = ?",
+    `SELECT Submissions.*, Assignments.title AS assignmentTitle
+     FROM Submissions
+     JOIN Assignments ON Submissions.assignmentId = Assignments.id
+     WHERE Submissions.studentId = ?`,
     [studentId]
   );
 

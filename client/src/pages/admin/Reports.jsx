@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { getAllUsers } from "../../API/usersApi";
 import { getAllAssignments } from "../../API/assignmentsApi";
-import { getAllSubmissions, getSubmissionsByStudent } from "../../API/submissionsApi";
-import { get } from "../../API/apiClient";
+import { getAllSubmissions } from "../../API/submissionsApi";
+import { getAllGroups } from "../../API/groupsApi";
 
 export default function Reports() {
   const [users, setUsers] = useState([]);
@@ -15,7 +15,7 @@ export default function Reports() {
   useEffect(() => {
     const fetchData = async () => {
       const [u, a, g, s] = await Promise.all([
-        getAllUsers(), getAllAssignments(), get("/groups"), getAllSubmissions()
+        getAllUsers(), getAllAssignments(), getAllGroups(), getAllSubmissions()
       ]);
       if (u.success) setUsers(u.users);
       if (a.success) setAssignments(a.assignments);
@@ -67,10 +67,10 @@ export default function Reports() {
   const statusLabel = { unsubmitted: "לא הוגש", submitted: "הוגש", checked: "נבדק", late: "באיחור" };
 
   return (
-    <div className="admin-page">
+    <div className="page">
       <h2>דוחות ציונים</h2>
 
-      <div className="admin-form">
+      <div className="data-form">
         <div className="form-actions">
           <select value={filter.type} onChange={(e) => setFilter({ type: e.target.value, id: "" })}>
             <option value="student">לפי סטודנט</option>
@@ -103,7 +103,7 @@ export default function Reports() {
       </div>
 
       {report.length > 0 && (
-        <table className="admin-table">
+        <table className="data-table">
           <thead>
             <tr><th>סטודנט</th><th>מטלה</th><th>ציון</th><th>סטטוס</th><th>הערת מרצה</th></tr>
           </thead>
