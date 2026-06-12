@@ -4,7 +4,7 @@ import { login } from "../API/authApi";
 import Errors from "../common/Errors";
 import Input from "../common/Input";
 
-export default function Login() {
+export default function Login({ setUser }) {
   const navigate = useNavigate();
   const [showError, setShowError] = useState("");
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -39,6 +39,7 @@ export default function Login() {
       localStorage.setItem("token", result.token);
 
       const payload = JSON.parse(atob(result.token.split(".")[1]));
+      setUser(payload);
 
       if (payload.role === "admin") navigate("/admin");
       else if (payload.role === "lecturer") navigate("/lecturer");
