@@ -17,6 +17,7 @@ import AssignmentDetails from "./pages/student/AssignmentDetails";
 import StudentPending from "./pages/student/StudentPending";
 import StudentGrades from "./pages/student/StudentGrades";
 import StudentProfile from "./pages/student/StudentProfile";
+import LecturerLayout from "./pages/lecturer/LecturerLayout";
 
 function getUser() {
   const token = localStorage.getItem("token");
@@ -45,6 +46,15 @@ function App() {
             <Route path="assignments" element={<ManageAssignments />} />
             <Route path="submissions" element={<ManageSubmissions />} />
             <Route path="reports" element={<Reports />} />
+            <Route path="profile" element={<AdminProfile />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={["lecturer"]} user={user} />}>
+          <Route path="/lecturer" element={<LecturerLayout />}>
+            <Route index element={<Navigate to="submissions" replace />} />
+            <Route path="submissions" element={<ManageSubmissions />} />
+            <Route path="assignments" element={<ManageAssignments />} />
             <Route path="profile" element={<AdminProfile />} />
           </Route>
         </Route>
