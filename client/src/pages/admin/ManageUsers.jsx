@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAllUsers, createUser, updateUser, deleteUser } from "../../API/usersApi";
+import Table from "../../common/Table";
 
 const emptyForm = { id: "", name: "", email: "", password: "", role: "student", groupId: "" };
 
@@ -50,6 +51,18 @@ export default function ManageUsers() {
 
   const handleCancel = () => { setEditId(null); setForm(emptyForm); setShowForm(false); };
 
+  const columns = [
+    { label: "ת.ז", render: (u) => u.id },
+    { label: "שם", render: (u) => u.name },
+    { label: "אימייל", render: (u) => u.email },
+    { label: "תפקיד", render: (u) => u.role },
+    { label: "קבוצה", render: (u) => u.groupId || "-" },
+    { label: "פעולות", render: (u) => <>
+      <button onClick={() => handleEdit(u)}>עריכה</button>
+      <button className="btn-danger" onClick={() => handleDelete(u.id)}>מחיקה</button>
+    </> },
+  ];
+
   return (
     <div className="page">
       <div className="page-header">
@@ -76,28 +89,7 @@ export default function ManageUsers() {
         </div>
       </form>}
 
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>ת.ז</th><th>שם</th><th>אימייל</th><th>תפקיד</th><th>קבוצה</th><th>פעולות</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((u) => (
-            <tr key={u.id}>
-              <td>{u.id}</td>
-              <td>{u.name}</td>
-              <td>{u.email}</td>
-              <td>{u.role}</td>
-              <td>{u.groupId || "-"}</td>
-              <td>
-                <button onClick={() => handleEdit(u)}>עריכה</button>
-                <button className="btn-danger" onClick={() => handleDelete(u.id)}>מחיקה</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table columns={columns} data={users} />
     </div>
   );
 }

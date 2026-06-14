@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getAllSubmissions, gradeSubmission } from "../../API/submissionsApi";
 import { getAllUsers } from "../../API/usersApi";
 import { getAllAssignments } from "../../API/assignmentsApi";
+import Table from "../../common/Table";
 
 export default function ManageSubmissions() {
   const [submissions, setSubmissions] = useState([]);
@@ -40,6 +41,20 @@ export default function ManageSubmissions() {
 
   const statusLabel = { unsubmitted: "לא הוגש", submitted: "הוגש", checked: "נבדק", late: "באיחור" };
 
+  const columns = [
+    { label: "סטודנט", render: (s) => getName(s.studentId) },
+    { label: "מטלה", render: (s) => getTitle(s.assignmentId) },
+    { label: "תאריך הגשה", render: (s) => s.submitDate?.slice(0, 16).replace("T", " ") || "-" },
+    { label: "סטטוס", render: (s) => statusLabel[s.status] },
+    { label: "ציון", render: (s) => s.grade ?? "-" },
+    { label: "קובץ", render: (s) => s.filePath ? <a href={`http://localhost:5000/${s.filePath}`} target="_blank" rel="noreferrer">פתח קובץ</a> : "-" },
+    { label: "פעולות", render: (s) => s.status !== "unsubmitted" && (
+      <button onClick={() => { setSelectedId(s.id); setGradeForm({ grade: s.grade ?? "", lecturerComment: s.lecturerComment ?? "" }); }}>
+        {s.status === "checked" ? "עריכת ציון" : "בדיקה וציון"}
+      </button>
+    )},
+  ];
+
   return (
     <div className="page">
       <h2>הגשות וציונים</h2>
@@ -67,34 +82,7 @@ export default function ManageSubmissions() {
         </form>
       )}
 
-      <table className="data-table">
-        <thead>
-          <tr><th>סטודנט</th><th>מטלה</th><th>תאריך הגשה</th><th>סטטוס</th><th>ציון</th><th>קובץ</th><th>פעולות</th></tr>
-        </thead>
-        <tbody>
-          {submissions.map((s) => (
-            <tr key={s.id}>
-              <td>{getName(s.studentId)}</td>
-              <td>{getTitle(s.assignmentId)}</td>
-              <td>{s.submitDate?.slice(0, 16).replace("T", " ") || "-"}</td>
-              <td>{statusLabel[s.status]}</td>
-              <td>{s.grade ?? "-"}</td>
-              <td>
-                {s.filePath
-                  ? <a href={`http://localhost:5000/${s.filePath}`} target="_blank" rel="noreferrer">פתח קובץ</a>
-                  : "-"}
-              </td>
-              <td>
-                {s.status !== "unsubmitted" && (
-                  <button onClick={() => { setSelectedId(s.id); setGradeForm({ grade: s.grade ?? "", lecturerComment: s.lecturerComment ?? "" }); }}>
-                    {s.status === "checked" ? "עריכת ציון" : "בדיקה וציון"}
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table columns={columns} data={submissions} />
     </div>
   );
 }
