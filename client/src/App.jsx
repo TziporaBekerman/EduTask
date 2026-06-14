@@ -9,6 +9,7 @@ import ManageAssignments from "./pages/admin/ManageAssignments";
 import ManageSubmissions from "./pages/admin/ManageSubmissions";
 import Reports from "./pages/admin/Reports";
 import AdminHome from "./pages/admin/AdminHome";
+import AdminProfile from "./pages/admin/AdminProfile";
 import StudentLayout from "./pages/student/StudentLayout";
 import StudentHome from "./pages/student/StudentHome";
 import StudentAssignments from "./pages/student/StudentAssignments";
@@ -44,6 +45,7 @@ function App() {
             <Route path="assignments" element={<ManageAssignments />} />
             <Route path="submissions" element={<ManageSubmissions />} />
             <Route path="reports" element={<Reports />} />
+            <Route path="profile" element={<AdminProfile />} />
           </Route>
         </Route>
 
