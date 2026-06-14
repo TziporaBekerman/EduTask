@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
-import { getAllUsers, updateUser } from "../../API/usersApi";
+import { getAllUsers, updateUser, deleteUser } from "../../API/usersApi";
 import { getAllGroups, createGroup, updateGroup, deleteGroup } from "../../API/groupsApi";
+import Modal from "../../common/Modal";
 
 export default function ManageGroups() {
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
   const [groupName, setGroupName] = useState("");
   const [editId, setEditId] = useState(null);
+  const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
+  const [deleteModal, setDeleteModal] = useState(null); // { groupId, students }
+  const [studentActions, setStudentActions] = useState({}); // { userId: { action: 'move'|'delete', groupId } }
 
   useEffect(() => { fetchGroups(); fetchUsers(); }, []);
 
@@ -31,36 +35,58 @@ export default function ManageGroups() {
     if (res.success) {
       setGroupName("");
       setEditId(null);
+      setShowForm(false);
       fetchGroups();
     } else {
       setError(res.message);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("האם למחוק קבוצה זו?")) return;
-    const res = await deleteGroup(id);
-    if (res.success) fetchGroups();
+  const handleDeleteClick = (groupId) => {
+    const students = users.filter((u) => u.groupId === groupId);
+    if (students.length === 0) {
+      confirmDelete(groupId, []);
+    } else {
+      const actions = {};
+      students.forEach((s) => { actions[s.id] = { action: "move", groupId: "" }; });
+      setStudentActions(actions);
+      setDeleteModal({ groupId, students });
+    }
   };
 
-  const handleAssignGroup = async (userId, groupId) => {
-    await updateUser(userId, { groupId: groupId || null });
+  const confirmDelete = async (groupId, students) => {
+    for (const student of students) {
+      const action = studentActions[student.id];
+      if (action?.action === "delete") {
+        await deleteUser(student.id);
+      } else if (action?.action === "move" && action.groupId) {
+        await updateUser(student.id, { groupId: action.groupId });
+      }
+    }
+    await deleteGroup(groupId);
+    setDeleteModal(null);
+    fetchGroups();
     fetchUsers();
   };
 
+  const handleCancel = () => { setEditId(null); setGroupName(""); setShowForm(false); };
+
   return (
     <div className="page">
-      <h2>ניהול קבוצות</h2>
+      <div className="page-header">
+        <h2>ניהול קבוצות</h2>
+        {!showForm && <button onClick={() => setShowForm(true)}>+ הוסף קבוצה</button>}
+      </div>
 
-      <form className="data-form" onSubmit={handleSubmit}>
+      {showForm && <form className="data-form" onSubmit={handleSubmit}>
         <h3>{editId ? "עריכת קבוצה" : "הוספת קבוצה"}</h3>
         <input placeholder="שם קבוצה" value={groupName} onChange={(e) => setGroupName(e.target.value)} required />
         {error && <p className="form-error">{error}</p>}
         <div className="form-actions">
           <button type="submit">{editId ? "עדכן" : "הוסף"}</button>
-          {editId && <button type="button" onClick={() => { setEditId(null); setGroupName(""); }}>ביטול</button>}
+          <button type="button" onClick={handleCancel}>ביטול</button>
         </div>
-      </form>
+      </form>}
 
       <table className="data-table">
         <thead>
@@ -72,8 +98,8 @@ export default function ManageGroups() {
               <td>{g.id}</td>
               <td>{g.name}</td>
               <td>
-                <button onClick={() => { setEditId(g.id); setGroupName(g.name); }}>עריכה</button>
-                <button className="btn-danger" onClick={() => handleDelete(g.id)}>מחיקה</button>
+                <button onClick={() => { setEditId(g.id); setGroupName(g.name); setShowForm(true); }}>עריכה</button>
+                <button className="btn-danger" onClick={() => handleDeleteClick(g.id)}>מחיקה</button>
               </td>
             </tr>
           ))}
@@ -83,7 +109,7 @@ export default function ManageGroups() {
       <h3>שיוך סטודנטים לקבוצות</h3>
       <table className="data-table">
         <thead>
-          <tr><th>שם</th><th>אימייל</th><th>קבוצה נוכחית</th><th>שנה קבוצה</th></tr>
+          <tr><th>שם</th><th>אימייל</th><th>קבוצה נוכחית</th></tr>
         </thead>
         <tbody>
           {users.map((u) => (
@@ -91,16 +117,60 @@ export default function ManageGroups() {
               <td>{u.name}</td>
               <td>{u.email}</td>
               <td>{groups.find((g) => g.id === u.groupId)?.name || "-"}</td>
-              <td>
-                <select value={u.groupId || ""} onChange={(e) => handleAssignGroup(u.id, e.target.value)}>
-                  <option value="">ללא קבוצה</option>
-                  {groups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
-                </select>
-              </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {deleteModal && (
+        <Modal title="מחיקת קבוצה" onClose={() => setDeleteModal(null)}>
+          <p>לקבוצה זו יש {deleteModal.students.length} תלמידים. מה לעשות עם כל אחד?</p>
+          <table className="data-table">
+            <thead>
+              <tr><th>שם</th><th>פעולה</th><th>קבוצה חדשה</th></tr>
+            </thead>
+            <tbody>
+              {deleteModal.students.map((s) => (
+                <tr key={s.id}>
+                  <td>{s.name}</td>
+                  <td>
+                    <select
+                      value={studentActions[s.id]?.action}
+                      onChange={(e) => setStudentActions((prev) => ({
+                        ...prev,
+                        [s.id]: { ...prev[s.id], action: e.target.value }
+                      }))}
+                    >
+                      <option value="move">העבר לקבוצה</option>
+                      <option value="delete">מחק תלמיד</option>
+                    </select>
+                  </td>
+                  <td>
+                    {studentActions[s.id]?.action === "move" && (
+                      <select
+                        value={studentActions[s.id]?.groupId}
+                        onChange={(e) => setStudentActions((prev) => ({
+                          ...prev,
+                          [s.id]: { ...prev[s.id], groupId: e.target.value }
+                        }))}
+                      >
+                        <option value="">בחר קבוצה</option>
+                        {groups.filter((g) => g.id !== deleteModal.groupId).map((g) => (
+                          <option key={g.id} value={g.id}>{g.name}</option>
+                        ))}
+                      </select>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="form-actions" style={{ marginTop: "16px" }}>
+            <button className="btn-danger" onClick={() => confirmDelete(deleteModal.groupId, deleteModal.students)}>אשר מחיקה</button>
+            <button onClick={() => setDeleteModal(null)}>ביטול</button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

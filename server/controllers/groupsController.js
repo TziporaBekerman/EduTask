@@ -20,6 +20,17 @@ const createGroup = async (req, res) => {
   }
 };
 
+const deleteGroup = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await groupsModel.deleteGroup(id);
+    return res.status(200).json({ success: true, message: "Group deleted" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 const updateGroup = async (req, res) => {
   try {
     const { id } = req.params;
@@ -27,16 +38,7 @@ const updateGroup = async (req, res) => {
     await groupsModel.updateGroup(id, name);
     return res.status(200).json({ success: true, message: "Group updated" });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Server error" });
-  }
-};
-
-const deleteGroup = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await groupsModel.deleteGroup(id);
-    return res.status(200).json({ success: true, message: "Group deleted" });
-  } catch (error) {
+    console.error(error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };

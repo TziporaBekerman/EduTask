@@ -134,7 +134,7 @@ const createUser = async (req, res) => {
       email,
       password,
       role,
-      groupId
+      groupId: groupId || null
     });
 
     return res.status(201).json({
@@ -143,6 +143,7 @@ const createUser = async (req, res) => {
     });
 
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Server error"
@@ -171,6 +172,7 @@ const updateUser = async (req, res) => {
     });
 
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Server error"

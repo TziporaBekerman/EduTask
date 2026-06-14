@@ -80,8 +80,10 @@ export default function ManageSubmissions() {
               <td>{statusLabel[s.status]}</td>
               <td>{s.grade ?? "-"}</td>
               <td>
-                {s.status !== "checked" && (
-                  <button onClick={() => setSelectedId(s.id)}>בדיקה וציון</button>
+                {s.status !== "unsubmitted" && (
+                  <button onClick={() => { setSelectedId(s.id); setGradeForm({ grade: s.grade ?? "", lecturerComment: s.lecturerComment ?? "" }); }}>
+                    {s.status === "checked" ? "עריכת ציון" : "בדיקה וציון"}
+                  </button>
                 )}
               </td>
             </tr>

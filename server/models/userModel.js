@@ -54,7 +54,11 @@ const createUser = async (user) => {
 };
 
 const updateUser = async (id, user) => {
-  const { name, email, role, groupId } = user;
+  const current = await getUserById(id);
+  const name = user.name ?? current.name;
+  const email = user.email ?? current.email;
+  const role = user.role ?? current.role;
+  const groupId = user.groupId !== undefined ? (user.groupId || null) : current.groupId;
 
   await db.query(
     `UPDATE Users
