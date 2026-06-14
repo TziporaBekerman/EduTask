@@ -43,4 +43,13 @@ const updateGroup = async (req, res) => {
   }
 };
 
-module.exports = { getAllGroups, createGroup, updateGroup, deleteGroup };
+const getMyGroups = async (req, res) => {
+  try {
+    const groups = await groupsModel.getGroupsByLecturer(req.user.id);
+    return res.status(200).json({ success: true, groups });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};  
+
+module.exports = { getAllGroups, createGroup, updateGroup, deleteGroup, getMyGroups };

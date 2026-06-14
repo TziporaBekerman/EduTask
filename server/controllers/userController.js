@@ -3,25 +3,27 @@ const userModel = require("../models/userModel");
 const updateMyProfile = async (req, res) => {
   try {
     const id = req.user.id;
-    const { name, email } = req.body;
+    const { name, email, password, currentPassword } = req.body;
+
+    if (!currentPassword)
+      return res.status(400).json({ success: false, message: "נדרשת סיסמה נוכחית" });
+
+    const valid = await userModel.verifyPassword(id, currentPassword);
+    if (!valid)
+      return res.status(401).json({ success: false, message: "סיסמה נוכחית שגויה" });
 
     const updates = {};
     if (name) updates.name = name;
     if (email) updates.email = email;
+    if (password) updates.password = password;
 
     await userModel.updateMyProfile(id, updates);
 
-    return res.status(200).json({
-      message: "Profile updated successfully",
-      success: true
-    });
+    return res.status(200).json({ success: true, message: "הפרטים עודכנו בהצלחה" });
 
   } catch (error) {
     console.error(error);
-
-    return res.status(500).json({
-      message: "Server error"
-    });
+    return res.status(500).json({ message: "Server error" });
   }
 };
 

@@ -18,6 +18,14 @@ const getAllUsers = async () => {
   return rows;
 };
 
+const verifyPassword = async (id, password) => {
+  const [rows] = await db.query(
+    "SELECT 1 FROM Users WHERE id = ? AND password = ?",
+    [id, password]
+  );
+  return rows.length > 0;
+};
+
 const getUserById = async (id) => {
   const [rows] = await db.query(
     "SELECT id, name, email, role, groupId FROM Users WHERE id = ?",
@@ -103,6 +111,7 @@ const getStudentsByLecturer = async (lecturerId) => {
 module.exports = {
   getAllUsers,
   getUserById,
+  verifyPassword,
   getUserByEmail,
   createUser,
   updateUser,

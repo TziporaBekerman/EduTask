@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { getAllAssignments, createAssignment, updateAssignment, deleteAssignment } from "../../API/assignmentsApi";
-import { getAllGroups } from "../../API/groupsApi";
+import { getAllGroups, getMyGroups } from "../../API/groupsApi";
 import { getAllUsers } from "../../API/usersApi";
 import Table from "../../common/Table";
 
 const emptyForm = { title: "", description: "", groupId: "", lecturerId: "", openDate: "", closeDate: "" };
+const currentUser = JSON.parse(atob(localStorage.getItem("token").split(".")[1]));
 
 export default function ManageAssignments() {
+  const isAdmin = currentUser.role === "admin";
   const [assignments, setAssignments] = useState([]);
   const [groups, setGroups] = useState([]);
   const [lecturers, setLecturers] = useState([]);
@@ -17,8 +19,8 @@ export default function ManageAssignments() {
 
   useEffect(() => {
     fetchAssignments();
-    fetchGroups();
-    fetchLecturers();
+    isAdmin ? fetchGroups() : fetchMyGroups();
+    if (isAdmin) fetchLecturers();
   }, []);
 
   const fetchAssignments = async () => {
@@ -31,6 +33,11 @@ export default function ManageAssignments() {
     if (res.success) setGroups(res.groups);
   };
 
+  const fetchMyGroups = async () => {
+    const res = await getMyGroups();
+    if (res.success) setGroups(res.groups);
+  };
+
   const fetchLecturers = async () => {
     const res = await getAllUsers();
     if (res.success) setLecturers(res.users.filter((u) => u.role === "lecturer"));
@@ -39,9 +46,8 @@ export default function ManageAssignments() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    const res = editId
-      ? await updateAssignment(editId, form)
-      : await createAssignment(form);
+    const data = isAdmin ? form : { ...form, lecturerId: currentUser.id };
+    const res = editId ? await updateAssignment(editId, data) : await createAssignment(data);
 
     if (res.success || res.id) {
       setForm(emptyForm);
@@ -102,10 +108,12 @@ export default function ManageAssignments() {
           <option value="">בחר קבוצה</option>
           {groups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
         </select>
-        <select name="lecturerId" value={form.lecturerId} onChange={handleChange} required>
-          <option value="">בחר מרצה</option>
-          {lecturers.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
-        </select>
+        {isAdmin
+          ? <select name="lecturerId" value={form.lecturerId} onChange={handleChange} required>
+              <option value="">בחר מרצה</option>
+              {lecturers.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+            </select>
+          : <input type="hidden" name="lecturerId" value={currentUser.id} />}
         <label>תאריך פתיחה
           <input name="openDate" type="datetime-local" value={form.openDate} onChange={handleChange} required />
         </label>

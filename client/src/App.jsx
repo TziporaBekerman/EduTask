@@ -9,14 +9,13 @@ import ManageAssignments from "./pages/admin/ManageAssignments";
 import ManageSubmissions from "./pages/admin/ManageSubmissions";
 import Reports from "./pages/admin/Reports";
 import AdminHome from "./pages/admin/AdminHome";
-import AdminProfile from "./pages/admin/AdminProfile";
+import ProfilePage from "./common/ProfilePage";
 import StudentLayout from "./pages/student/StudentLayout";
 import StudentHome from "./pages/student/StudentHome";
 import StudentAssignments from "./pages/student/StudentAssignments";
 import AssignmentDetails from "./pages/student/AssignmentDetails";
 import StudentPending from "./pages/student/StudentPending";
 import StudentGrades from "./pages/student/StudentGrades";
-import StudentProfile from "./pages/student/StudentProfile";
 import LecturerLayout from "./pages/lecturer/LecturerLayout";
 
 function getUser() {
@@ -46,7 +45,7 @@ function App() {
             <Route path="assignments" element={<ManageAssignments />} />
             <Route path="submissions" element={<ManageSubmissions />} />
             <Route path="reports" element={<Reports />} />
-            <Route path="profile" element={<AdminProfile />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
         </Route>
 
@@ -55,7 +54,7 @@ function App() {
             <Route index element={<Navigate to="submissions" replace />} />
             <Route path="submissions" element={<ManageSubmissions />} />
             <Route path="assignments" element={<ManageAssignments />} />
-            <Route path="profile" element={<AdminProfile />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
         </Route>
 
@@ -67,7 +66,7 @@ function App() {
             <Route path="assignments/:id" element={<AssignmentDetails />} />
             <Route path="pending" element={<StudentPending />} />
             <Route path="grades" element={<StudentGrades />} />
-            <Route path="profile" element={<StudentProfile />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
         </Route>
 
