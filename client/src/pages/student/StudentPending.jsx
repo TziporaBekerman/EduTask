@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getMySubmissions } from "../../API/submissionsApi";
 import { useNavigate } from "react-router-dom";
+import Table from "../../common/Table";
 
 export default function StudentPending() {
   const [pending, setPending] = useState([]);
@@ -16,25 +17,16 @@ export default function StudentPending() {
     fetchData();
   }, []);
 
+  const columns = [
+    { label: "כותרת", render: (s) => s.assignmentTitle },
+    { label: "תאריך סגירה", render: (s) => s.closeDate?.slice(0, 16).replace("T", " ") || "-" },
+    { label: "פעולות", render: (s) => <button onClick={() => navigate(`/student/assignments/${s.assignmentId}`)}>הגש</button> },
+  ];
+
   return (
     <div className="page">
       <h2>ממתין להגשה</h2>
-      <table className="data-table">
-        <thead>
-          <tr><th>כותרת</th><th>תאריך סגירה</th><th>פעולות</th></tr>
-        </thead>
-        <tbody>
-          {pending.map((s) => (
-            <tr key={s.id}>
-              <td>{s.assignmentTitle}</td>
-              <td>{s.closeDate?.slice(0, 16).replace("T", " ") || "-"}</td>
-              <td>
-                <button onClick={() => navigate(`/student/assignments/${s.assignmentId}`)}>הגש</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table columns={columns} data={pending} />
     </div>
   );
 }

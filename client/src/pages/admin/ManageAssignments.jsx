@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getAllAssignments, createAssignment, updateAssignment, deleteAssignment } from "../../API/assignmentsApi";
 import { getAllGroups } from "../../API/groupsApi";
 import { getAllUsers } from "../../API/usersApi";
+import Table from "../../common/Table";
 
 const emptyForm = { title: "", description: "", groupId: "", lecturerId: "", openDate: "", closeDate: "" };
 
@@ -75,6 +76,17 @@ export default function ManageAssignments() {
 
   const handleCancel = () => { setEditId(null); setForm(emptyForm); setShowForm(false); };
 
+  const columns = [
+    { label: "כותרת", render: (a) => a.title },
+    { label: "קבוצה", render: (a) => groups.find((g) => g.id === a.groupId)?.name || a.groupId },
+    { label: "פתיחה", render: (a) => a.openDate?.slice(0, 16).replace("T", " ") },
+    { label: "סגירה", render: (a) => a.closeDate?.slice(0, 16).replace("T", " ") },
+    { label: "פעולות", render: (a) => <>
+      <button onClick={() => handleEdit(a)}>עריכה</button>
+      <button className="btn-danger" onClick={() => handleDelete(a.id)}>מחיקה</button>
+    </> },
+  ];
+
   return (
     <div className="page">
       <div className="page-header">
@@ -107,25 +119,7 @@ export default function ManageAssignments() {
         </div>
       </form>}
 
-      <table className="data-table">
-        <thead>
-          <tr><th>כותרת</th><th>קבוצה</th><th>פתיחה</th><th>סגירה</th><th>פעולות</th></tr>
-        </thead>
-        <tbody>
-          {assignments.map((a) => (
-            <tr key={a.id}>
-              <td>{a.title}</td>
-              <td>{groups.find((g) => g.id === a.groupId)?.name || a.groupId}</td>
-              <td>{a.openDate?.slice(0, 16).replace("T", " ")}</td>
-              <td>{a.closeDate?.slice(0, 16).replace("T", " ")}</td>
-              <td>
-                <button onClick={() => handleEdit(a)}>עריכה</button>
-                <button className="btn-danger" onClick={() => handleDelete(a.id)}>מחיקה</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table columns={columns} data={assignments} />
     </div>
   );
 }

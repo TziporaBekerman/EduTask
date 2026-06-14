@@ -112,5 +112,6 @@ module.exports = {
   getAssignmentsByGroup,
   updateAssignment,
   deleteAssignment,
-  getAssignmentsByLecturer
+  getAssignmentsByLecturer,
+  getAssignmentsByStudentId
 };

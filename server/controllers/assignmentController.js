@@ -29,8 +29,7 @@ const getAllAssignments = async (req, res) => {
       ? await assignmentModel.getAllAssignments()
       : req.user.role === "lecturer"
         ? await assignmentModel.getAssignmentsByLecturer(req.user.id)
-        : await assignmentModel.getAssignmentsByGroup(req.user.groupId);
-
+        : await assignmentModel.getAssignmentsByStudentId(req.user.id);
     return res.status(200).json({ success: true, assignments });
 
   } catch (error) {

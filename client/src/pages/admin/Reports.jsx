@@ -3,6 +3,7 @@ import { getAllUsers } from "../../API/usersApi";
 import { getAllAssignments } from "../../API/assignmentsApi";
 import { getAllSubmissions } from "../../API/submissionsApi";
 import { getAllGroups } from "../../API/groupsApi";
+import Table from "../../common/Table";
 
 export default function Reports() {
   const [users, setUsers] = useState([]);
@@ -66,6 +67,14 @@ export default function Reports() {
   const students = users.filter((u) => u.role === "student");
   const statusLabel = { unsubmitted: "לא הוגש", submitted: "הוגש", checked: "נבדק", late: "באיחור" };
 
+  const columns = [
+    { label: "סטודנט", render: (r) => r.student },
+    { label: "מטלה", render: (r) => r.assignment },
+    { label: "ציון", render: (r) => r.grade },
+    { label: "סטטוס", render: (r) => statusLabel[r.status] },
+    { label: "הערת מרצה", render: (r) => r.comment },
+  ];
+
   return (
     <div className="page">
       <h2>דוחות ציונים</h2>
@@ -102,24 +111,7 @@ export default function Reports() {
         </div>
       </div>
 
-      {report.length > 0 && (
-        <table className="data-table">
-          <thead>
-            <tr><th>סטודנט</th><th>מטלה</th><th>ציון</th><th>סטטוס</th><th>הערת מרצה</th></tr>
-          </thead>
-          <tbody>
-            {report.map((r, i) => (
-              <tr key={i}>
-                <td>{r.student}</td>
-                <td>{r.assignment}</td>
-                <td>{r.grade}</td>
-                <td>{statusLabel[r.status]}</td>
-                <td>{r.comment}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      {report.length > 0 && <Table columns={columns} data={report} />}
     </div>
   );
 }
