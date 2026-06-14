@@ -69,7 +69,7 @@ export default function ManageSubmissions() {
 
       <table className="data-table">
         <thead>
-          <tr><th>סטודנט</th><th>מטלה</th><th>תאריך הגשה</th><th>סטטוס</th><th>ציון</th><th>פעולות</th></tr>
+          <tr><th>סטודנט</th><th>מטלה</th><th>תאריך הגשה</th><th>סטטוס</th><th>ציון</th><th>קובץ</th><th>פעולות</th></tr>
         </thead>
         <tbody>
           {submissions.map((s) => (
@@ -79,6 +79,11 @@ export default function ManageSubmissions() {
               <td>{s.submitDate?.slice(0, 16).replace("T", " ") || "-"}</td>
               <td>{statusLabel[s.status]}</td>
               <td>{s.grade ?? "-"}</td>
+              <td>
+                {s.filePath
+                  ? <a href={`http://localhost:5000/${s.filePath}`} target="_blank" rel="noreferrer">פתח קובץ</a>
+                  : "-"}
+              </td>
               <td>
                 {s.status !== "unsubmitted" && (
                   <button onClick={() => { setSelectedId(s.id); setGradeForm({ grade: s.grade ?? "", lecturerComment: s.lecturerComment ?? "" }); }}>
