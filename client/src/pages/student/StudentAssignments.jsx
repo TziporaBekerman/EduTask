@@ -6,12 +6,10 @@ export default function StudentAssignments() {
   const [assignments, setAssignments] = useState([]);
   const navigate = useNavigate();
 
-  const user = JSON.parse(atob(localStorage.getItem("token").split(".")[1]));
-
   useEffect(() => {
     const fetchData = async () => {
       const res = await getAllAssignments();
-      if (res.success) setAssignments(res.assignments.filter((a) => a.groupId === user.groupId));
+      if (res.success) setAssignments(res.assignments);
     };
     fetchData();
   }, []);

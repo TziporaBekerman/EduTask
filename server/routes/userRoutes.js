@@ -4,7 +4,7 @@ const { verifyToken, authorizeRole } = require("../middlewares/authMiddleware");
 const userController = require("../controllers/userController");
 
 // המשתמש המחובר מקבל את פרטי הפרופיל שלו
-router.get("/me", verifyToken, userController.getAllUsers);
+router.get("/me", verifyToken, userController.getMyProfile);
 
 // המשתמש המחובר מעדכן את פרטי הפרופיל שלו
 router.put("/me", verifyToken, userController.updateMyProfile);

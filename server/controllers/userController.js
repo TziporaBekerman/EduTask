@@ -2,18 +2,18 @@ const userModel = require("../models/userModel");
 
 const updateMyProfile = async (req, res) => {
   try {
-    const { id } = req.user.id;
+    const id = req.user.id;
     const { name, email } = req.body;
 
-    const user = await userModel.getUserById(id);
+    const updates = {};
+    if (name) updates.name = name;
+    if (email) updates.email = email;
 
-    await userModel.updateMyProfile(id, {
-      name,
-      email
-    });
+    await userModel.updateMyProfile(id, updates);
 
     return res.status(200).json({
-      message: "Profile updated successfully"
+      message: "Profile updated successfully",
+      success: true
     });
 
   } catch (error) {
@@ -27,11 +27,14 @@ const updateMyProfile = async (req, res) => {
 
 const getMyProfile = async (req, res) => {
   try {
-    const { id } = req.user.id;
+    const  id  = req.user.id;
 
     const user = await userModel.getUserById(id);
 
-    return res.status(200).json(user);
+    return res.status(200).json({
+      success: true,
+      user
+    });
 
   } catch (error) {
     console.error(error);

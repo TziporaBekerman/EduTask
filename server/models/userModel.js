@@ -1,17 +1,16 @@
 const db = require("../database/db");
 
 const updateMyProfile = async (id, user) => {
-  const { name, email } = user;
+  const fields = Object.keys(user);
+  if (fields.length === 0) return true;
 
-  await db.query(
-    `UPDATE Users
-     SET name = ?, email = ?
-     WHERE id = ?`,
-    [name, email, id]
-  );
+  const setClause = fields.map((f) => `${f} = ?`).join(", ");
+  const values = [...fields.map((f) => user[f]), id];
+
+  await db.query(`UPDATE Users SET ${setClause} WHERE id = ?`, values);
 
   return true;
-  };
+};
 const getAllUsers = async () => {
   const [rows] = await db.query(
     "SELECT id, name, email, role, groupId FROM Users"

@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { getMySubmissions } from "../../API/submissionsApi";
+import { getMyProfile } from "../../API/usersApi";
 
 export default function StudentHome() {
   const [submissions, setSubmissions] = useState([]);
-
-  const user = JSON.parse(atob(localStorage.getItem("token").split(".")[1]));
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       const s = await getMySubmissions();
       if (s.success) setSubmissions(s.submissions);
+      const u = await getMyProfile();
+      if (u) setUser(u);
     };
     fetchData();
   }, []);
@@ -18,7 +20,7 @@ export default function StudentHome() {
 
   return (
     <div className="page">
-      <h2>שלום, {user.name || user.email}</h2>
+      <h2>שלום, {user?.name || user?.email}</h2>
 
       <h3>סטטוס הגשות אחרונות</h3>
       <table className="data-table">

@@ -1,19 +1,30 @@
-import { useState } from "react";
-import { updateUser } from "../API/usersApi";
+import { useState, useEffect } from "react";
+import { updateMyProfile, getMyProfile } from "../API/usersApi";
 import Errors from "./Errors";
+import Input from "./Input";
 
-// fields — מערך של שדות שכל תפקיד מגדיר בעצמו
-// דוגמה: [{ name: "name", label: "שם מלא", type: "text" }, ...]
 export default function ProfilePage({ fields }) {
-  const user = JSON.parse(atob(localStorage.getItem("token").split(".")[1]));
+  const tokenUser = JSON.parse(atob(localStorage.getItem("token").split(".")[1]));
 
+  const [user, setUser] = useState(null);
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState(
-    Object.fromEntries(fields.map((f) => [f.name, user[f.name] || ""]))
-  );
+  const [form, setForm] = useState({});
+  // הודעת שגיאה להצגה למשתמש
   const [error, setError] = useState("");
+  // הודעת הצלחה להצגה למשתמש
   const [success, setSuccess] = useState("");
 
+  // טעינת פרטי המשתמש מהשרת בטעינה ראשונית
+  useEffect(() => {
+    getMyProfile().then((data) => {
+      setUser(data.user);
+      setForm(Object.fromEntries(fields.map((f) => [f.name, data.user[f.name] || ""])));
+    });
+  }, []);
+
+  if (!user) return null;
+
+  // פונקציית ולידציה — בודקת את ערכי הטופס לפני שליחה
   const validate = () => {
     for (const f of fields) {
       if (f.required && !form[f.name]) {
@@ -22,10 +33,6 @@ export default function ProfilePage({ fields }) {
       }
       if (f.name === "email" && form.email && !/\S+@\S+\.\S+/.test(form.email)) {
         setError("כתובת מייל לא תקינה");
-        return false;
-      }
-      if (f.name === "password" && form.password && form.password.length < 6) {
-        setError("סיסמה חייבת להכיל לפחות 6 תווים");
         return false;
       }
     }
@@ -37,26 +44,23 @@ export default function ProfilePage({ fields }) {
     setError("");
     setSuccess("");
     if (!validate()) return;
-
-    const res = await updateUser(user.id, form);
+    const res = await updateMyProfile(form);
     if (res.success) {
       setSuccess("הפרטים עודכנו בהצלחה");
       setEditing(false);
-      // מנקה סיסמה אחרי עדכון
       setForm((p) => ({ ...p, password: "" }));
+      // טעינה מחדש של הפרטים העדכניים מהשרת
+      getMyProfile().then((data) => setUser(data.user));
     } else {
       setError(res.message);
     }
   };
 
-  const handleChange = (e) =>
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   return (
     <div className="page">
       <h2>פרופיל</h2>
 
-      {/* תצוגת פרטים נוכחיים */}
       {!editing && (
         <div className="data-form">
           {fields.filter((f) => f.name !== "password").map((f) => (
@@ -70,19 +74,17 @@ export default function ProfilePage({ fields }) {
         </div>
       )}
 
-      {/* טופס עריכה */}
       {editing && (
         <form className="data-form" onSubmit={handleSubmit}>
           {fields.map((f) => (
             <label key={f.name}>
               {f.label}
-              <input
+              <Input
                 name={f.name}
                 type={f.type || "text"}
                 placeholder={f.label}
-                value={form[f.name]}
-                onChange={handleChange}
-                required={f.required}
+                data={form}
+                setData={setForm}
               />
             </label>
           ))}
@@ -94,8 +96,6 @@ export default function ProfilePage({ fields }) {
           {success && <p className="form-success">{success}</p>}
         </form>
       )}
-
-      {/* הודעת הצלחה מחוץ לטופס (אחרי סגירת העריכה) */}
       {!editing && success && <p className="form-success">{success}</p>}
     </div>
   );
