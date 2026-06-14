@@ -45,6 +45,16 @@ const getAssignmentById = async (id) => {
   return rows[0] || null;
 };
 
+const getAssignmentsByStudentId = async (studentId) => {
+  const [rows] = await db.query(
+    `SELECT a.* FROM Assignments a
+     JOIN Users u ON u.groupId = a.groupId
+     WHERE u.id = ?`,
+    [studentId]
+  );
+  return rows;
+};
+
 const getAssignmentsByGroup = async (groupId) => {
   const [rows] = await db.query(
     "SELECT * FROM Assignments WHERE groupId = ?",
