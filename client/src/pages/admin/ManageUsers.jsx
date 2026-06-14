@@ -7,6 +7,7 @@ export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [editId, setEditId] = useState(null);
+  const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => { fetchUsers(); }, []);
@@ -26,6 +27,7 @@ export default function ManageUsers() {
     if (res.success) {
       setForm(emptyForm);
       setEditId(null);
+      setShowForm(false);
       fetchUsers();
     } else {
       setError(res.message);
@@ -35,6 +37,7 @@ export default function ManageUsers() {
   const handleEdit = (user) => {
     setEditId(user.id);
     setForm({ ...user, password: "" });
+    setShowForm(true);
   };
 
   const handleDelete = async (id) => {
@@ -45,16 +48,21 @@ export default function ManageUsers() {
 
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
+  const handleCancel = () => { setEditId(null); setForm(emptyForm); setShowForm(false); };
+
   return (
     <div className="page">
-      <h2>ניהול משתמשים</h2>
+      <div className="page-header">
+        <h2>ניהול משתמשים</h2>
+        {!showForm && <button onClick={() => setShowForm(true)}>+ הוסף משתמש</button>}
+      </div>
 
-      <form className="data-form" onSubmit={handleSubmit}>
+      {showForm && <form className="data-form" onSubmit={handleSubmit} autoComplete="off">
         <h3>{editId ? "עריכת משתמש" : "הוספת משתמש"}</h3>
-        {!editId && <input name="id" placeholder="ת.ז / מספר עובד" value={form.id} onChange={handleChange} required />}
-        <input name="name" placeholder="שם מלא" value={form.name} onChange={handleChange} required />
-        <input name="email" type="email" placeholder="אימייל" value={form.email} onChange={handleChange} required />
-        <input name="password" type="password" placeholder="סיסמה" value={form.password} onChange={handleChange} required={!editId} />
+        {!editId && <input name="id" placeholder="ת.ז / מספר עובד" value={form.id} onChange={handleChange} autoComplete="off" required />}
+        <input name="name" placeholder="שם מלא" value={form.name} onChange={handleChange} autoComplete="off" required />
+        <input name="email" type="email" placeholder="אימייל" value={form.email} onChange={handleChange} autoComplete="off" required />
+        <input name="password" type="password" placeholder="סיסמה" value={form.password} onChange={handleChange} autoComplete="new-password" required={!editId} />
         <select name="role" value={form.role} onChange={handleChange}>
           <option value="student">סטודנט</option>
           <option value="lecturer">מרצה</option>
@@ -64,9 +72,9 @@ export default function ManageUsers() {
         {error && <p className="form-error">{error}</p>}
         <div className="form-actions">
           <button type="submit">{editId ? "עדכן" : "הוסף"}</button>
-          {editId && <button type="button" onClick={() => { setEditId(null); setForm(emptyForm); }}>ביטול</button>}
+          <button type="button" onClick={handleCancel}>ביטול</button>
         </div>
-      </form>
+      </form>}
 
       <table className="data-table">
         <thead>

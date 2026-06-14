@@ -11,6 +11,7 @@ export default function ManageAssignments() {
   const [lecturers, setLecturers] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [editId, setEditId] = useState(null);
+  const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export default function ManageAssignments() {
     if (res.success || res.id) {
       setForm(emptyForm);
       setEditId(null);
+      setShowForm(false);
       fetchAssignments();
     } else {
       setError(res.message);
@@ -60,6 +62,7 @@ export default function ManageAssignments() {
       openDate: a.openDate?.slice(0, 16) || "",
       closeDate: a.closeDate?.slice(0, 16) || ""
     });
+    setShowForm(true);
   };
 
   const handleDelete = async (id) => {
@@ -70,11 +73,16 @@ export default function ManageAssignments() {
 
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
+  const handleCancel = () => { setEditId(null); setForm(emptyForm); setShowForm(false); };
+
   return (
     <div className="page">
-      <h2>ניהול מטלות</h2>
+      <div className="page-header">
+        <h2>ניהול מטלות</h2>
+        {!showForm && <button onClick={() => setShowForm(true)}>+ הוסף מטלה</button>}
+      </div>
 
-      <form className="data-form" onSubmit={handleSubmit}>
+      {showForm && <form className="data-form" onSubmit={handleSubmit}>
         <h3>{editId ? "עריכת מטלה" : "הוספת מטלה"}</h3>
         <input name="title" placeholder="כותרת" value={form.title} onChange={handleChange} required />
         <textarea name="description" placeholder="תיאור" value={form.description} onChange={handleChange} />
@@ -95,9 +103,9 @@ export default function ManageAssignments() {
         {error && <p className="form-error">{error}</p>}
         <div className="form-actions">
           <button type="submit">{editId ? "עדכן" : "הוסף"}</button>
-          {editId && <button type="button" onClick={() => { setEditId(null); setForm(emptyForm); }}>ביטול</button>}
+          <button type="button" onClick={handleCancel}>ביטול</button>
         </div>
-      </form>
+      </form>}
 
       <table className="data-table">
         <thead>

@@ -16,6 +16,12 @@ const updateGroup = async (id, name) => {
 };
 
 const deleteGroup = async (id) => {
+  await db.query(
+    `DELETE FROM Submissions WHERE assignmentId IN 
+     (SELECT id FROM Assignments WHERE groupId = ?)`, [id]
+  );
+  await db.query("DELETE FROM Assignments WHERE groupId = ?", [id]);
+  await db.query("UPDATE Users SET groupId = NULL WHERE groupId = ?", [id]);
   await db.query("DELETE FROM StudentGroups WHERE id = ?", [id]);
   return true;
 };
