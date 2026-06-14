@@ -3,6 +3,8 @@ import { getAllAssignments, createAssignment, updateAssignment, deleteAssignment
 import { getAllGroups, getMyGroups } from "../../API/groupsApi";
 import { getAllUsers } from "../../API/usersApi";
 import Table from "../../common/Table";
+import Input from "../../common/Input";
+import Errors from "../../common/Errors";
 
 const emptyForm = { title: "", description: "", groupId: "", lecturerId: "", openDate: "", closeDate: "" };
 const currentUser = JSON.parse(atob(localStorage.getItem("token").split(".")[1]));
@@ -102,7 +104,7 @@ export default function ManageAssignments() {
 
       {showForm && <form className="data-form" onSubmit={handleSubmit}>
         <h3>{editId ? "עריכת מטלה" : "הוספת מטלה"}</h3>
-        <input name="title" placeholder="כותרת" value={form.title} onChange={handleChange} required />
+        <Input name="title" placeholder="כותרת" data={form} setData={setForm} />
         <textarea name="description" placeholder="תיאור" value={form.description} onChange={handleChange} />
         <select name="groupId" value={form.groupId} onChange={handleChange} required>
           <option value="">בחר קבוצה</option>
@@ -115,12 +117,12 @@ export default function ManageAssignments() {
             </select>
           : <input type="hidden" name="lecturerId" value={currentUser.id} />}
         <label>תאריך פתיחה
-          <input name="openDate" type="datetime-local" value={form.openDate} onChange={handleChange} required />
+          <Input name="openDate" type="datetime-local" data={form} setData={setForm} />
         </label>
         <label>תאריך סגירה
-          <input name="closeDate" type="datetime-local" value={form.closeDate} onChange={handleChange} required />
+          <Input name="closeDate" type="datetime-local" data={form} setData={setForm} />
         </label>
-        {error && <p className="form-error">{error}</p>}
+        <Errors showError={error} setShowError={setError} />
         <div className="form-actions">
           <button type="submit">{editId ? "עדכן" : "הוסף"}</button>
           <button type="button" onClick={handleCancel}>ביטול</button>
