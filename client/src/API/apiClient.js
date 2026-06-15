@@ -28,6 +28,24 @@ export const put = async (path, body) => {
   return res.json();
 };
 
+export const postForm = async (path, formData) => {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    body: formData
+  });
+  return res.json();
+};
+
+export const putForm = async (path, formData) => {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    body: formData
+  });
+  return res.json();
+};
+
 export const del = async (path) => {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "DELETE",

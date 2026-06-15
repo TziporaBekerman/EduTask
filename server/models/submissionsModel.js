@@ -106,15 +106,19 @@ const deleteSubmission = async (id) => {
   return await getSubmissionById(id);
 };
 const updateSubmission = async (id, data) => {
-  const { filePath, studentComment } = data;
+  const { filePath, studentComment, status, submitDate } = data;
 
-  await db.query(
-    `UPDATE Submissions
-     SET filePath = ?,
-         studentComment = ?
-     WHERE id = ?`,
-    [filePath, studentComment, id]
-  );
+  const fields = [];
+  const values = [];
+
+  if (filePath !== undefined) { fields.push("filePath = ?"); values.push(filePath); }
+  if (studentComment !== undefined) { fields.push("studentComment = ?"); values.push(studentComment); }
+  if (status !== undefined) { fields.push("status = ?"); values.push(status); }
+  if (submitDate !== undefined) { fields.push("submitDate = ?"); values.push(submitDate); }
+
+  if (fields.length === 0) return await getSubmissionById(id);
+
+  await db.query(`UPDATE Submissions SET ${fields.join(", ")} WHERE id = ?`, [...values, id]);
 
   return await getSubmissionById(id);
 };

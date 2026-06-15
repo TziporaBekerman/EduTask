@@ -20,6 +20,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/groups", require("./routes/groupsRoutes"));

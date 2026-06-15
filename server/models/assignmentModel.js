@@ -38,10 +38,12 @@ const getAllAssignments = async () => {
 
 const getAssignmentById = async (id) => {
   const [rows] = await db.query(
-    "SELECT * FROM Assignments WHERE id = ?",
+    `SELECT a.*, u.email AS lecturerEmail
+     FROM Assignments a
+     JOIN Users u ON u.id = a.lecturerId
+     WHERE a.id = ?`,
     [id]
   );
-
   return rows[0] || null;
 };
 

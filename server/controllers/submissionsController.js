@@ -1,4 +1,12 @@
 const submissionModel = require("../models/submissionsModel");
+const fs = require("fs");
+const path = require("path");
+
+const saveFile = (file) => {
+  const filename = `${Date.now()}-${file.originalname}`;
+  fs.writeFileSync(path.join("uploads", filename), file.buffer);
+  return `uploads/${filename}`;
+};
 
 // אדמין רואה הכל, מרצה רואה רק של התלמידים שלו
 const getAllSubmissions = async (req, res) => {
@@ -48,8 +56,9 @@ const getMySubmissions = async (req, res) => {
 
 const createSubmission = async (req, res) => {
   try {
-    const { assignmentId, filePath, studentComment } = req.body;
+    const { assignmentId, studentComment } = req.body;
     const studentId = req.user.id;
+    const filePath = req.file ? saveFile(req.file) : null;
 
     if (!assignmentId || !filePath) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -74,7 +83,7 @@ const createSubmission = async (req, res) => {
 const updateSubmission = async (req, res) => {
   try {
     const { id } = req.params;
-    const { filePath, studentComment } = req.body;
+    const { studentComment } = req.body;
 
     const submission = await submissionModel.getSubmissionById(id);
 
@@ -83,7 +92,7 @@ const updateSubmission = async (req, res) => {
     }
 
     // סטודנט יכול לעדכן רק את ההגשה שלו
-    if (submission.studentId !== req.user.id) {
+    if (Number(submission.studentId) !== Number(req.user.id)) {
       return res.status(403).json({ message: "Access denied" });
     }
 
@@ -91,18 +100,20 @@ const updateSubmission = async (req, res) => {
       return res.status(400).json({ message: "Cannot update a checked submission" });
     }
 
-    await submissionModel.updateSubmission(id, {
-      filePath,
-      studentComment,
-      status: "submitted",
-      submitDate: new Date()
-    });
+    const updateData = { studentComment };
+    if (req.file) {
+      updateData.filePath = saveFile(req.file);
+      updateData.status = "submitted";
+      updateData.submitDate = new Date();
+    }
 
-    return res.status(200).json({ message: "Submission updated successfully" });
+    await submissionModel.updateSubmission(id, updateData);
+
+    return res.status(200).json({ success: true, message: "Submission updated successfully" });
 
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    console.error("updateSubmission error:", error);
+    return res.status(500).json({ message: error.message || "Server error" });
   }
 };
 
