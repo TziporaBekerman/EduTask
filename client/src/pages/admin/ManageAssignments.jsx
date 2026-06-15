@@ -7,9 +7,9 @@ import Input from "../../common/Input";
 import Errors from "../../common/Errors";
 
 const emptyForm = { title: "", description: "", groupId: "", lecturerId: "", openDate: "", closeDate: "" };
-const currentUser = JSON.parse(atob(localStorage.getItem("token").split(".")[1]));
 
 export default function ManageAssignments() {
+  const currentUser = JSON.parse(atob(localStorage.getItem("token").split(".")[1]));
   const isAdmin = currentUser.role === "admin";
   const [assignments, setAssignments] = useState([]);
   const [groups, setGroups] = useState([]);
