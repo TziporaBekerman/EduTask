@@ -1,13 +1,19 @@
 import { useState, useEffect } from "react";
 import { getDashboard } from "../../API/reportsApi";
+import Errors from "../../common/Errors";
 
 export default function AdminHome() {
   const [stats, setStats] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getDashboard();
-      if (res.success) setStats(res.dashboard);
+      try {
+        const res = await getDashboard();
+        setStats(res.dashboard);
+      } catch (err) {
+        setError(err.message);
+      }
     };
 
     fetchData();
@@ -16,7 +22,7 @@ export default function AdminHome() {
     return () => clearInterval(interval); // ניקוי כשהקומפוננטה נסגרת
   }, []);
 
-  if (!stats) return <div className="page">טוען...</div>;
+  if (!stats) return <div className="page"><Errors showError={error} setShowError={setError} />טוען...</div>;
 
   return (
     <div className="page">

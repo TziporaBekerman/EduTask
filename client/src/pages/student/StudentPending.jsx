@@ -2,16 +2,20 @@ import { useState, useEffect } from "react";
 import { getMySubmissions } from "../../API/submissionsApi";
 import { useNavigate } from "react-router-dom";
 import Table from "../../common/Table";
+import Errors from "../../common/Errors";
 
 export default function StudentPending() {
   const [pending, setPending] = useState([]);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      const s = await getMySubmissions();
-      if (s.success) {
+      try {
+        const s = await getMySubmissions();
         setPending(s.submissions.filter((sub) => sub.status === "unsubmitted"));
+      } catch (err) {
+        setError(err.message);
       }
     };
     fetchData();
@@ -26,6 +30,7 @@ export default function StudentPending() {
   return (
     <div className="page">
       <h2>ממתין להגשה</h2>
+      <Errors showError={error} setShowError={setError} />
       <Table columns={columns} data={pending} />
     </div>
   );

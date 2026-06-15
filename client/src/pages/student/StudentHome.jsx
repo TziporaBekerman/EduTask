@@ -1,17 +1,22 @@
 import { useState, useEffect } from "react";
 import { getMySubmissions } from "../../API/submissionsApi";
 import { getMyProfile } from "../../API/usersApi";
+import Errors from "../../common/Errors";
 
 export default function StudentHome() {
   const [submissions, setSubmissions] = useState([]);
   const [user, setUser] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
-      const s = await getMySubmissions();
-      if (s.success) setSubmissions(s.submissions);
-      const u = await getMyProfile();
-      if (u) setUser(u);
+      try {
+        const [s, u] = await Promise.all([getMySubmissions(), getMyProfile()]);
+        setSubmissions(s.submissions);
+        setUser(u.user);
+      } catch (err) {
+        setError(err.message);
+      }
     };
     fetchData();
   }, []);
@@ -20,6 +25,7 @@ export default function StudentHome() {
 
   return (
     <div className="page">
+      <Errors showError={error} setShowError={setError} />
       <h2>שלום, {user?.name || user?.email}</h2>
 
       <h3>סטטוס הגשות אחרונות</h3>

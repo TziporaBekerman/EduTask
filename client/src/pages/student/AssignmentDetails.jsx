@@ -31,13 +31,11 @@ export default function AssignmentDetails() {
     const fetchData = async () => {
       try {
         const [a, s] = await Promise.all([getAssignmentById(assignmentId), getMySubmissions()]);
-        if (a.success) setAssignment(a.assignment);
-        if (s.success) {
-          const found = s.submissions.find((sub) => sub.assignmentId == assignmentId);
-          if (found) { setSubmission(found); setComment(found.studentComment || ""); }
-        }
+        setAssignment(a.assignment);
+        const found = s.submissions.find((sub) => sub.assignmentId == assignmentId);
+        if (found) { setSubmission(found); setComment(found.studentComment || ""); }
       } catch (err) {
-        setError("שגיאה בטעינת הנתונים");
+        setError(err.message);
       }
     };
     fetchData();
@@ -67,20 +65,16 @@ export default function AssignmentDetails() {
     if (!file) { setError("יש לבחור קובץ"); return; }
     try {
       const fd = buildFormData();
-      const res = submission
+      submission
         ? await updateSubmission(submission.id, fd)
         : await createSubmission(fd);
-      if (res.success || res.id) {
-        setSuccess("ההגשה נשמרה בהצלחה");
-        setShowUpload(false);
-        setFile(null);
-        const s = await getMySubmissions();
-        if (s.success) setSubmission(s.submissions.find((sub) => sub.assignmentId == assignmentId));
-      } else {
-        setError(res.message);
-      }
+      setSuccess("ההגשה נשמרה בהצלחה");
+      setShowUpload(false);
+      setFile(null);
+      const s = await getMySubmissions();
+      setSubmission(s.submissions.find((sub) => sub.assignmentId == assignmentId));
     } catch (err) {
-      setError("שגיאה בשמירת ההגשה");
+      setError(err.message);
     }
   };
 
@@ -90,11 +84,11 @@ export default function AssignmentDetails() {
     try {
       const fd = new FormData();
       fd.append("studentComment", comment);
-      const res = await updateSubmission(submission.id, fd);
-      if (res.success) { setSuccess("ההערה נשמרה"); setShowComment(false); }
-      else setError(res.message);
+      await updateSubmission(submission.id, fd);
+      setSuccess("ההערה נשמרה");
+      setShowComment(false);
     } catch (err) {
-      setError("שגיאה בשמירת ההערה");
+      setError(err.message);
     }
   };
 

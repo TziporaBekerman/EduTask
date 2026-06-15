@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAllUsers, createUser, updateUser, deleteUser } from "../../API/usersApi";
 import Table from "../../common/Table";
+import Errors from "../../common/Errors";
 
 const emptyForm = { id: "", name: "", email: "", password: "", role: "student", groupId: "" };
 
@@ -14,24 +15,25 @@ export default function ManageUsers() {
   useEffect(() => { fetchUsers(); }, []);
 
   const fetchUsers = async () => {
-    const res = await getAllUsers();
-    if (res.success) setUsers(res.users);
+    try {
+      const res = await getAllUsers();
+      setUsers(res.users);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    const res = editId
-      ? await updateUser(editId, form)
-      : await createUser(form);
-
-    if (res.success) {
+    try {
+      editId ? await updateUser(editId, form) : await createUser(form);
       setForm(emptyForm);
       setEditId(null);
       setShowForm(false);
       fetchUsers();
-    } else {
-      setError(res.message);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -43,8 +45,12 @@ export default function ManageUsers() {
 
   const handleDelete = async (id) => {
     if (!confirm("האם למחוק משתמש זה?")) return;
-    const res = await deleteUser(id);
-    if (res.success) fetchUsers();
+    try {
+      await deleteUser(id);
+      fetchUsers();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -82,7 +88,7 @@ export default function ManageUsers() {
           <option value="admin">מנהל</option>
         </select>
         <input name="groupId" placeholder="מזהה קבוצה (לסטודנט)" value={form.groupId} onChange={handleChange} />
-        {error && <p className="form-error">{error}</p>}
+        <Errors showError={error} setShowError={setError} />
         <div className="form-actions">
           <button type="submit">{editId ? "עדכן" : "הוסף"}</button>
           <button type="button" onClick={handleCancel}>ביטול</button>

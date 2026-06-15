@@ -4,6 +4,7 @@ import { getAllAssignments } from "../../API/assignmentsApi";
 import { getAllSubmissions } from "../../API/submissionsApi";
 import { getAllGroups } from "../../API/groupsApi";
 import Table from "../../common/Table";
+import Errors from "../../common/Errors";
 
 export default function Reports() {
   const [users, setUsers] = useState([]);
@@ -12,16 +13,21 @@ export default function Reports() {
   const [submissions, setSubmissions] = useState([]);
   const [filter, setFilter] = useState({ type: "student", id: "" });
   const [report, setReport] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
+    try {
       const [u, a, g, s] = await Promise.all([
         getAllUsers(), getAllAssignments(), getAllGroups(), getAllSubmissions()
       ]);
-      if (u.success) setUsers(u.users);
-      if (a.success) setAssignments(a.assignments);
-      if (g.success) setGroups(g.groups);
-      if (s.success) setSubmissions(s.submissions);
+      setUsers(u.users);
+      setAssignments(a.assignments);
+      setGroups(g.groups);
+      setSubmissions(s.submissions);
+    } catch (err) {
+      setError(err.message);
+    }
     };
     fetchData();
   }, []);
@@ -78,6 +84,7 @@ export default function Reports() {
   return (
     <div className="page">
       <h2>דוחות ציונים</h2>
+      <Errors showError={error} setShowError={setError} />
 
       <div className="data-form">
         <div className="form-actions">

@@ -3,6 +3,7 @@ import { getAllUsers, updateUser, deleteUser } from "../../API/usersApi";
 import { getAllGroups, createGroup, updateGroup, deleteGroup } from "../../API/groupsApi";
 import Modal from "../../common/Modal";
 import Table from "../../common/Table";
+import Errors from "../../common/Errors";
 
 export default function ManageGroups() {
   const [groups, setGroups] = useState([]);
@@ -17,29 +18,34 @@ export default function ManageGroups() {
   useEffect(() => { fetchGroups(); fetchUsers(); }, []);
 
   const fetchGroups = async () => {
-    const res = await getAllGroups();
-    if (res.success) setGroups(res.groups);
+    try {
+      const res = await getAllGroups();
+      setGroups(res.groups);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const fetchUsers = async () => {
-    const res = await getAllUsers();
-    if (res.success) setUsers(res.users.filter((u) => u.role === "student"));
+    try {
+      const res = await getAllUsers();
+      setUsers(res.users.filter((u) => u.role === "student"));
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    const res = editId
-      ? await updateGroup(editId, { name: groupName })
-      : await createGroup({ name: groupName });
-
-    if (res.success) {
+    try {
+      editId ? await updateGroup(editId, { name: groupName }) : await createGroup({ name: groupName });
       setGroupName("");
       setEditId(null);
       setShowForm(false);
       fetchGroups();
-    } else {
-      setError(res.message);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -56,18 +62,19 @@ export default function ManageGroups() {
   };
 
   const confirmDelete = async (groupId, students) => {
-    for (const student of students) {
-      const action = studentActions[student.id];
-      if (action?.action === "delete") {
-        await deleteUser(student.id);
-      } else if (action?.action === "move" && action.groupId) {
-        await updateUser(student.id, { groupId: action.groupId });
+    try {
+      for (const student of students) {
+        const action = studentActions[student.id];
+        if (action?.action === "delete") await deleteUser(student.id);
+        else if (action?.action === "move" && action.groupId) await updateUser(student.id, { groupId: action.groupId });
       }
+      await deleteGroup(groupId);
+      setDeleteModal(null);
+      fetchGroups();
+      fetchUsers();
+    } catch (err) {
+      setError(err.message);
     }
-    await deleteGroup(groupId);
-    setDeleteModal(null);
-    fetchGroups();
-    fetchUsers();
   };
 
   const handleCancel = () => { setEditId(null); setGroupName(""); setShowForm(false); };
@@ -113,7 +120,7 @@ export default function ManageGroups() {
       {showForm && <form className="data-form" onSubmit={handleSubmit}>
         <h3>{editId ? "עריכת קבוצה" : "הוספת קבוצה"}</h3>
         <input placeholder="שם קבוצה" value={groupName} onChange={(e) => setGroupName(e.target.value)} required />
-        {error && <p className="form-error">{error}</p>}
+        <Errors showError={error} setShowError={setError} />
         <div className="form-actions">
           <button type="submit">{editId ? "עדכן" : "הוסף"}</button>
           <button type="button" onClick={handleCancel}>ביטול</button>

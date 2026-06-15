@@ -19,10 +19,16 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    getMyProfile().then((data) => {
-      setUser(data.user);
-      setForm({ name: data.user.name || "", email: data.user.email || "", password: "", currentPassword: "" });
-    });
+    const fetchProfile = async () => {
+      try {
+        const data = await getMyProfile();
+        setUser(data.user);
+        setForm({ name: data.user.name || "", email: data.user.email || "", password: "", currentPassword: "" });
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+    fetchProfile();
   }, []);
 
   if (!user) return null;
@@ -38,14 +44,15 @@ export default function ProfilePage() {
     e.preventDefault();
     setError(""); setSuccess("");
     if (!validate()) return;
-    const res = await updateMyProfile(form);
-    if (res.success) {
+    try {
+      await updateMyProfile(form);
       setSuccess("הפרטים עודכנו בהצלחה");
       setEditing(false);
       setForm((p) => ({ ...p, password: "", currentPassword: "" }));
-      getMyProfile().then((data) => setUser(data.user));
-    } else {
-      setError(res.message);
+      const data = await getMyProfile();
+      setUser(data.user);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
