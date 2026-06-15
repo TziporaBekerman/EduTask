@@ -39,7 +39,15 @@ export default function AssignmentDetails() {
     fetchData();
   }, []);
 
-  const isLate = assignment && new Date() > new Date(assignment.closeDate);
+  const [isLate, setIsLate] = useState(false);
+
+  useEffect(() => {
+    if (!assignment) return;
+    const check = () => setIsLate(new Date() > new Date(assignment.closeDate));
+    check();
+    const interval = setInterval(check, 1000);
+    return () => clearInterval(interval);
+  }, [assignment]);
 
   const buildFormData = () => {
     const fd = new FormData();
@@ -97,7 +105,7 @@ export default function AssignmentDetails() {
       {isLate ? (
         <div className="form-error">
           <p>הינך באיחור של {getTimeDiff(assignment.closeDate)}</p>
-          {lecturer && <p>אם יש לאיחורך סיבה מוצדקת פנה למרצה: <a href={`mailto:${assignment.lecturerEmail}`}>{assignment.lecturerEmail}</a></p>}
+          <p>אם יש לאיחורך סיבה מוצדקת פנה למרצה: <a href={`mailto:${assignment.lecturerEmail}`}>{assignment.lecturerEmail}</a></p>
         </div>
       ) : (
         <p>זמן שנותר: {getTimeDiff(assignment.closeDate)}</p>

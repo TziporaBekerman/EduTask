@@ -71,7 +71,7 @@ status
 VALUES
 
 -- checked
-(4,4,'/uploads/html_portfolio.zip',
+(4,4,'uploads/_הגשת נושא.pdf',
 '2026-06-02 18:30:00',
 'Completed all pages',
 98,
@@ -79,7 +79,7 @@ VALUES
 'checked'),
 
 -- checked
-(5,4,'/uploads/css_design.zip',
+(5,4,'uploads/-פתרון תרגיל כיתה 5 מעה לא למתן ציון למשוב בלבד.pdf',
 '2026-06-05 20:15:00',
 'Responsive for mobile',
 90,
@@ -87,7 +87,7 @@ VALUES
 'checked'),
 
 -- checked
-(6,4,'/uploads/dom_project.zip',
+(6,4,'uploads/-פתרון תרגיל כיתה 5 מעה לא למתן ציון למשוב בלבד.pdf 2.pdf',
 '2026-06-08 17:20:00',
 'DOM manipulation finished',
 84,
@@ -95,7 +95,7 @@ VALUES
 'checked'),
 
 -- submitted (waiting for lecturer)
-(7,4,'/uploads/react_router.zip',
+(7,4,'uploads/215688377_X4485986.pdf',
 '2026-06-09 12:10:00',
 'Waiting for feedback',
 NULL,
@@ -103,7 +103,7 @@ NULL,
 'submitted'),
 
 -- submitted
-(8,4,'/uploads/redux.zip',
+(8,4,'uploads/NLP.pdf',
 '2026-06-10 16:00:00',
 'Implemented Redux Toolkit',
 NULL,
@@ -111,33 +111,15 @@ NULL,
 'submitted'),
 
 -- late
-(9,4,'/uploads/jwt.zip',
-'2026-06-15 11:45:00',
-'Submitted one day late',
-76,
-'Late but acceptable',
-'late'),
-
--- late
-(10,4,'/uploads/socket.zip',
-'2026-06-18 15:00:00',
-'Network issue during upload',
-69,
-'Late submission',
-'late'),
-
--- unsubmitted
-(11,4,
-NULL,
+(9,4,NULL,
 NULL,
 NULL,
 NULL,
 NULL,
 'unsubmitted'),
 
--- unsubmitted
-(12,4,
-NULL,
+-- late
+(10,4,NULL,
 NULL,
 NULL,
 NULL,
@@ -145,8 +127,23 @@ NULL,
 'unsubmitted'),
 
 -- submitted
-(13,4,
-'/uploads/final_project.zip',
+(11,4,'uploads/פיזיקה .pdf',
+'2026-06-12 10:00:00',
+NULL,
+NULL,
+NULL,
+'submitted'),
+
+-- submitted
+(12,4,'uploads/תרגיל כיתה 5 מעה לא למתן ציון למשוב בלבד.pdf',
+'2026-06-13 09:30:00',
+NULL,
+NULL,
+NULL,
+'submitted'),
+
+-- submitted
+(13,4,'uploads/מצגת לבינה.pdf',
 '2026-06-17 21:10:00',
 'Final version uploaded',
 NULL,
