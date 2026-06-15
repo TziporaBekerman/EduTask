@@ -1,4 +1,5 @@
 const submissionModel = require("../models/submissionsModel");
+const assignmentModel = require("../models/assignmentModel");
 const fs = require("fs");
 const path = require("path");
 
@@ -63,6 +64,11 @@ const createSubmission = async (req, res) => {
     if (!assignmentId || !filePath) {
       return res.status(400).json({ message: "Missing required fields" });
     }
+
+    const assignment = await assignmentModel.getAssignmentById(assignmentId);
+    if (!assignment) return res.status(404).json({ message: "Assignment not found" });
+    if (new Date() > new Date(assignment.closeDate))
+      return res.status(403).json({ success: false, message: "תאריך ההגשה עבר" });
 
     const submission = await submissionModel.createSubmission({
       assignmentId,
