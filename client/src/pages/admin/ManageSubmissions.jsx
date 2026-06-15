@@ -3,6 +3,7 @@ import { getAllSubmissions, gradeSubmission } from "../../API/submissionsApi";
 import { getAllUsers } from "../../API/usersApi";
 import { getAllAssignments } from "../../API/assignmentsApi";
 import Table from "../../common/Table";
+import Errors from "../../common/Errors";
 
 export default function ManageSubmissions() {
   const [submissions, setSubmissions] = useState([]);
@@ -17,10 +18,14 @@ export default function ManageSubmissions() {
   }, []);
 
   const fetchAll = async () => {
-    const [s, u, a] = await Promise.all([getAllSubmissions(), getAllUsers(), getAllAssignments()]);
-    if (s.success) setSubmissions(s.submissions);
-    if (u.success) setUsers(u.users);
-    if (a.success) setAssignments(a.assignments);
+    try {
+      const [s, u, a] = await Promise.all([getAllSubmissions(), getAllUsers(), getAllAssignments()]);
+      setSubmissions(s.submissions);
+      setUsers(u.users);
+      setAssignments(a.assignments);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const getName = (id) => users.find((u) => u.id === id)?.name || id;
@@ -29,13 +34,13 @@ export default function ManageSubmissions() {
   const handleGrade = async (e) => {
     e.preventDefault();
     setError("");
-    const res = await gradeSubmission(selectedId, gradeForm);
-    if (res.success) {
+    try {
+      await gradeSubmission(selectedId, gradeForm);
       setSelectedId(null);
       setGradeForm({ grade: "", lecturerComment: "" });
       fetchAll();
-    } else {
-      setError(res.message);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -74,7 +79,7 @@ export default function ManageSubmissions() {
             value={gradeForm.lecturerComment}
             onChange={(e) => setGradeForm((p) => ({ ...p, lecturerComment: e.target.value }))}
           />
-          {error && <p className="form-error">{error}</p>}
+          <Errors showError={error} setShowError={setError} />
           <div className="form-actions">
             <button type="submit">שמור ציון</button>
             <button type="button" onClick={() => setSelectedId(null)}>ביטול</button>

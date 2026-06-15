@@ -5,9 +5,16 @@ const getHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`
 });
 
+
+const handleResponse = async (res) => {
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Server error");
+  return data;
+};
+
 export const get = async (path) => {
   const res = await fetch(`${BASE_URL}${path}`, { headers: getHeaders() });
-  return res.json();
+  return handleResponse(res);
 };
 
 export const post = async (path, body) => {
@@ -16,7 +23,7 @@ export const post = async (path, body) => {
     headers: getHeaders(),
     body: JSON.stringify(body)
   });
-  return res.json();
+  return handleResponse(res);
 };
 
 export const put = async (path, body) => {
@@ -25,7 +32,7 @@ export const put = async (path, body) => {
     headers: getHeaders(),
     body: JSON.stringify(body)
   });
-  return res.json();
+  return handleResponse(res);
 };
 
 export const postForm = async (path, formData) => {
@@ -34,7 +41,7 @@ export const postForm = async (path, formData) => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     body: formData
   });
-  return res.json();
+  return handleResponse(res);
 };
 
 export const putForm = async (path, formData) => {
@@ -43,7 +50,7 @@ export const putForm = async (path, formData) => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     body: formData
   });
-  return res.json();
+  return handleResponse(res);
 };
 
 export const del = async (path) => {
@@ -51,5 +58,5 @@ export const del = async (path) => {
     method: "DELETE",
     headers: getHeaders()
   });
-  return res.json();
+  return handleResponse(res);
 };

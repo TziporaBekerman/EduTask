@@ -71,3 +71,8 @@ usersApi.js
 מייל המרצה — כדי להציג את המייל של המרצה צריך לשלוף אותו לפי lecturerId שנמצא במטלה. getUserById קיים ב-usersApi.js אבל הוא מוגבל ל-admin/lecturer. האם להשתמש בו או שיש נתיב אחר?
 
 הערה — ההערה של הסטודנט, האם היא נשמרת ב-DB? כי createSubmission כרגע מקבל רק assignmentId ו-content. האם content הוא שדה ההערה?
+
+
+
+
+פוטפורם ופוסטפורם

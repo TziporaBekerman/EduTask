@@ -26,38 +26,53 @@ export default function ManageAssignments() {
   }, []);
 
   const fetchAssignments = async () => {
-    const res = await getAllAssignments();
-    if (res.success) setAssignments(res.assignments);
+    try {
+      const res = await getAllAssignments();
+      setAssignments(res.assignments);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const fetchGroups = async () => {
-    const res = await getAllGroups();
-    if (res.success) setGroups(res.groups);
+    try {
+      const res = await getAllGroups();
+      setGroups(res.groups);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const fetchMyGroups = async () => {
-    const res = await getMyGroups();
-    if (res.success) setGroups(res.groups);
+    try {
+      const res = await getMyGroups();
+      setGroups(res.groups);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const fetchLecturers = async () => {
-    const res = await getAllUsers();
-    if (res.success) setLecturers(res.users.filter((u) => u.role === "lecturer"));
+    try {
+      const res = await getAllUsers();
+      setLecturers(res.users.filter((u) => u.role === "lecturer"));
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    const data = isAdmin ? form : { ...form, lecturerId: currentUser.id };
-    const res = editId ? await updateAssignment(editId, data) : await createAssignment(data);
-
-    if (res.success || res.id) {
+    try {
+      const data = isAdmin ? form : { ...form, lecturerId: currentUser.id };
+      await (editId ? updateAssignment(editId, data) : createAssignment(data));
       setForm(emptyForm);
       setEditId(null);
       setShowForm(false);
       fetchAssignments();
-    } else {
-      setError(res.message);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -76,8 +91,12 @@ export default function ManageAssignments() {
 
   const handleDelete = async (id) => {
     if (!confirm("האם למחוק מטלה זו?")) return;
-    const res = await deleteAssignment(id);
-    if (res.success) fetchAssignments();
+    try {
+      await deleteAssignment(id);
+      fetchAssignments();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));

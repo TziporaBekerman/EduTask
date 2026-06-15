@@ -29,11 +29,15 @@ export default function AssignmentDetails() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [a, s] = await Promise.all([getAssignmentById(assignmentId), getMySubmissions()]);
-      if (a.success) setAssignment(a.assignment);
-      if (s.success) {
-        const found = s.submissions.find((sub) => sub.assignmentId == assignmentId);
-        if (found) { setSubmission(found); setComment(found.studentComment || ""); }
+      try {
+        const [a, s] = await Promise.all([getAssignmentById(assignmentId), getMySubmissions()]);
+        if (a.success) setAssignment(a.assignment);
+        if (s.success) {
+          const found = s.submissions.find((sub) => sub.assignmentId == assignmentId);
+          if (found) { setSubmission(found); setComment(found.studentComment || ""); }
+        }
+      } catch (err) {
+        setError("שגיאה בטעינת הנתונים");
       }
     };
     fetchData();
@@ -53,29 +57,37 @@ export default function AssignmentDetails() {
     e.preventDefault();
     setError(""); setSuccess("");
     if (!file) { setError("יש לבחור קובץ"); return; }
-    const fd = buildFormData();
-    const res = submission
-      ? await updateSubmission(submission.id, fd)
-      : await createSubmission(fd);
-    if (res.success || res.id) {
-      setSuccess("ההגשה נשמרה בהצלחה");
-      setShowUpload(false);
-      setFile(null);
-      const s = await getMySubmissions();
-      if (s.success) setSubmission(s.submissions.find((sub) => sub.assignmentId == assignmentId));
-    } else {
-      setError(res.message);
+    try {
+      const fd = buildFormData();
+      const res = submission
+        ? await updateSubmission(submission.id, fd)
+        : await createSubmission(fd);
+      if (res.success || res.id) {
+        setSuccess("ההגשה נשמרה בהצלחה");
+        setShowUpload(false);
+        setFile(null);
+        const s = await getMySubmissions();
+        if (s.success) setSubmission(s.submissions.find((sub) => sub.assignmentId == assignmentId));
+      } else {
+        setError(res.message);
+      }
+    } catch (err) {
+      setError("שגיאה בשמירת ההגשה");
     }
   };
 
   const handleSaveComment = async () => {
     setError(""); setSuccess("");
     if (!submission) { setError("יש להגיש קובץ קודם"); return; }
-    const fd = new FormData();
-    fd.append("studentComment", comment);
-    const res = await updateSubmission(submission.id, fd);
-    if (res.success) { setSuccess("ההערה נשמרה"); setShowComment(false); }
-    else setError(res.message);
+    try {
+      const fd = new FormData();
+      fd.append("studentComment", comment);
+      const res = await updateSubmission(submission.id, fd);
+      if (res.success) { setSuccess("ההערה נשמרה"); setShowComment(false); }
+      else setError(res.message);
+    } catch (err) {
+      setError("שגיאה בשמירת ההערה");
+    }
   };
 
   const onDrop = (e) => {
