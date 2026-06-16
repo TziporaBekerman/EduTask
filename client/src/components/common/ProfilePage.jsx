@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { updateMyProfile, getMyProfile } from "../API/usersApi";
+import { updateMyProfile, getMyProfile } from "../../API/usersApi";
 import Errors from "./Errors";
 import Input from "./Input";
 

@@ -1,7 +1,6 @@
 const mysql = require('mysql2');
-require('dotenv').config(); // טוען את המשתנים מקובץ ה-.env (יודע לעלות תיקייה אחת למעלה לבד)
+require('dotenv').config();
 
-// יצירת מאגר החיבורים (Connection Pool) ל-SQL
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,

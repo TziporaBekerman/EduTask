@@ -5,6 +5,14 @@ const getAllGroups = async () => {
   return rows;
 };
 
+const getGroupsByLecturer = async (lecturerId) => {
+  const [rows] = await db.query(
+    `SELECT DISTINCT g.* FROM StudentGroups g JOIN Assignments a ON a.groupId = g.id WHERE a.lecturerId = ?`,
+    [lecturerId]
+  );
+  return rows;
+};
+
 const createGroup = async (name) => {
   const [result] = await db.query("INSERT INTO StudentGroups (name) VALUES (?)", [name]);
   return { id: result.insertId, name };
@@ -25,12 +33,5 @@ const deleteGroup = async (id) => {
   await db.query("DELETE FROM StudentGroups WHERE id = ?", [id]);
   return true;
 };
-const getGroupsByLecturer = async (lecturerId) => {
-  const [rows] = await db.query(
-    `SELECT DISTINCT g.* FROM StudentGroups g JOIN Assignments a ON a.groupId = g.id WHERE a.lecturerId = ?`,
-    [lecturerId]
-  );
-  return rows;
-};
 
-module.exports = { getAllGroups, createGroup, updateGroup, deleteGroup , getGroupsByLecturer };
+module.exports = { getAllGroups, getGroupsByLecturer, createGroup, updateGroup, deleteGroup };

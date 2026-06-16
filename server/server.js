@@ -2,6 +2,8 @@ const express = require('express');
 const db = require('./database/db.js');
 const cors = require("cors");
 
+const errorHandler = require("./middlewares/errorHandler");
+
 const app = express();
 require('dotenv').config();
 
@@ -12,7 +14,7 @@ async function testConnection() {
     } catch (err) {
         console.error('❌ שגיאה בהתחברות ל-SQL:', err.message);
     }
-}//למחוק לפני ההגשה?
+}
 testConnection();
 
 app.use(cors({
@@ -21,7 +23,6 @@ app.use(cors({
 
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
-
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/groups", require("./routes/groupsRoutes"));
 app.use("/users", require("./routes/userRoutes"));
@@ -29,11 +30,8 @@ app.use("/assignments", require("./routes/assignmentsRoutes"));
 app.use("/submissions", require("./routes/submissionsRoutes"));
 app.use("/reports", require("./routes/reportsRoutes"));
 
+app.use(errorHandler);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
-
-
-

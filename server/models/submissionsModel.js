@@ -1,6 +1,5 @@
 const db = require("../database/db");
 
-// יצירת הגשה
 const createSubmission = async (submission) => {
   const {
     assignmentId,
@@ -36,7 +35,6 @@ const createSubmission = async (submission) => {
   };
 };
 
-// כל ההגשות
 const getAllSubmissions = async () => {
   const [rows] = await db.query(
     "SELECT * FROM Submissions"
@@ -45,7 +43,6 @@ const getAllSubmissions = async () => {
   return rows;
 };
 
-// הגשה לפי ID
 const getSubmissionById = async (id) => {
   const [rows] = await db.query(
     "SELECT * FROM Submissions WHERE id = ?",
@@ -55,7 +52,6 @@ const getSubmissionById = async (id) => {
   return rows[0] || null;
 };
 
-// הגשות של סטודנט
 const getSubmissionsByStudent = async (studentId) => {
   const [rows] = await db.query(
     `SELECT Submissions.*, Assignments.title AS assignmentTitle
@@ -68,7 +64,6 @@ const getSubmissionsByStudent = async (studentId) => {
   return rows;
 };
 
-// הגשות של מטלה
 const getSubmissionsByAssignment = async (assignmentId) => {
   const [rows] = await db.query(
     "SELECT * FROM Submissions WHERE assignmentId = ?",
@@ -78,7 +73,6 @@ const getSubmissionsByAssignment = async (assignmentId) => {
   return rows;
 };
 
-// בדיקת הגשה ומתן ציון
 const gradeSubmission = async (
   id,
   grade,
@@ -96,7 +90,6 @@ const gradeSubmission = async (
   return await getSubmissionById(id);
 };
 
-// מחיקת הגשה
 const deleteSubmission = async (id) => {
   await db.query(
     "DELETE FROM Submissions WHERE id = ?",
@@ -105,6 +98,7 @@ const deleteSubmission = async (id) => {
 
   return await getSubmissionById(id);
 };
+
 const updateSubmission = async (id, data) => {
   const { filePath, studentComment, status, submitDate } = data;
 
@@ -123,7 +117,6 @@ const updateSubmission = async (id, data) => {
   return await getSubmissionById(id);
 };
 
-// הגשות של תלמידים של מרצה
 const getSubmissionsByLecturer = async (lecturerId) => {
   const [rows] = await db.query(
     `SELECT s.* FROM Submissions s

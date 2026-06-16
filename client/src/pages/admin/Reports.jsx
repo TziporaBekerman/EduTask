@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { getAllUsers } from "../../API/usersApi";
 import { getAllAssignments } from "../../API/assignmentsApi";
 import { getAllSubmissions } from "../../API/submissionsApi";
-import { getAllGroups } from "../../API/groupsApi";
-import Table from "../../common/Table";
-import Errors from "../../common/Errors";
+import { getGroups } from "../../API/groupsApi";
+import Table from "../../components/common/Table";
+import Errors from "../../components/common/Errors";
 
 export default function Reports() {
   const [users, setUsers] = useState([]);
@@ -19,7 +19,7 @@ export default function Reports() {
     const fetchData = async () => {
     try {
       const [u, a, g, s] = await Promise.all([
-        getAllUsers(), getAllAssignments(), getAllGroups(), getAllSubmissions()
+        getAllUsers(), getAllAssignments(), getGroups(), getAllSubmissions()
       ]);
       setUsers(u.users);
       setAssignments(a.assignments);

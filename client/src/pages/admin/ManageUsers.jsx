@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { getAllUsers, createUser, updateUser, deleteUser } from "../../API/usersApi";
-import Table from "../../common/Table";
-import Errors from "../../common/Errors";
+import Table from "../../components/common/Table";
+import Errors from "../../components/common/Errors";
+import Input from "../../components/common/Input";
 
 const emptyForm = { id: "", name: "", email: "", password: "", role: "student", groupId: "" };
 
@@ -78,10 +79,10 @@ export default function ManageUsers() {
 
       {showForm && <form className="data-form" onSubmit={handleSubmit} autoComplete="off">
         <h3>{editId ? "עריכת משתמש" : "הוספת משתמש"}</h3>
-        {!editId && <input name="id" placeholder="ת.ז / מספר עובד" value={form.id} onChange={handleChange} autoComplete="off" required />}
-        <input name="name" placeholder="שם מלא" value={form.name} onChange={handleChange} autoComplete="off" required />
-        <input name="email" type="email" placeholder="אימייל" value={form.email} onChange={handleChange} autoComplete="off" required />
-        <input name="password" type="password" placeholder="סיסמה" value={form.password} onChange={handleChange} autoComplete="new-password" required={!editId} />
+        {!editId && <Input name="id" placeholder="ת.ז / מספר עובד" data={form} setData={setForm} />}
+        <Input name="name" placeholder="שם מלא" data={form} setData={setForm} />
+        <Input name="email" type="email" placeholder="אימייל" data={form} setData={setForm} />
+        <Input name="password" type="password" placeholder="סיסמה" data={form} setData={setForm} />
         <select name="role" value={form.role} onChange={handleChange}>
           <option value="student">סטודנט</option>
           <option value="lecturer">מרצה</option>

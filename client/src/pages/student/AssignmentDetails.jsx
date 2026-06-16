@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getAssignmentById } from "../../API/assignmentsApi";
 import { getMySubmissions, createSubmission, updateSubmission } from "../../API/submissionsApi";
-import Errors from "../../common/Errors";
+import Errors from "../../components/common/Errors";
 
 const statusLabel = { unsubmitted: "לא הוגש", submitted: "הוגש", checked: "נבדק", late: "באיחור" };
 

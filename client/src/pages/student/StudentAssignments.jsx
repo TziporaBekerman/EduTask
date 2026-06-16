@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAllAssignments } from "../../API/assignmentsApi";
 import { useNavigate } from "react-router-dom";
-import Table from "../../common/Table";
+import Table from "../../components/common/Table";
 
 export default function StudentAssignments() {
   const [assignments, setAssignments] = useState([]);

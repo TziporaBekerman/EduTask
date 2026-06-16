@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
-import ProtectedRoute from "./common/ProtectedRoute";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 import AdminLayout from "./pages/admin/AdminLayout";
 import ManageUsers from "./pages/admin/ManageUsers";
 import ManageGroups from "./pages/admin/ManageGroups";
@@ -9,7 +9,7 @@ import ManageAssignments from "./pages/admin/ManageAssignments";
 import ManageSubmissions from "./pages/admin/ManageSubmissions";
 import Reports from "./pages/admin/Reports";
 import AdminHome from "./pages/admin/AdminHome";
-import ProfilePage from "./common/ProfilePage";
+import ProfilePage from "./components/common/ProfilePage";
 import StudentLayout from "./pages/student/StudentLayout";
 import StudentHome from "./pages/student/StudentHome";
 import StudentAssignments from "./pages/student/StudentAssignments";
@@ -37,7 +37,7 @@ function App() {
         <Route path="/login" element={<Login setUser={setUser} />} />
 
         <Route element={<ProtectedRoute allowedRoles={["admin"]} user={user} />}>
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminLayout setUser={setUser} />}>
             <Route index element={<Navigate to="home" replace />} />
             <Route path="home" element={<AdminHome />} />
             <Route path="users" element={<ManageUsers />} />
@@ -50,7 +50,7 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["lecturer"]} user={user} />}>
-          <Route path="/lecturer" element={<LecturerLayout />}>
+          <Route path="/lecturer" element={<LecturerLayout setUser={setUser} />}>
             <Route index element={<Navigate to="submissions" replace />} />
             <Route path="submissions" element={<ManageSubmissions />} />
             <Route path="assignments" element={<ManageAssignments />} />
@@ -59,7 +59,7 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["student"]} user={user} />}>
-          <Route path="/student" element={<StudentLayout />}>
+          <Route path="/student" element={<StudentLayout setUser={setUser} />}>
             <Route index element={<Navigate to="home" replace />} />
             <Route path="home" element={<StudentHome />} />
             <Route path="assignments" element={<StudentAssignments />} />

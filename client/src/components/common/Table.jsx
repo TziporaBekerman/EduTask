@@ -1,5 +1,4 @@
-// columns: מערך של { label, render } — label הוא כותרת העמודה, render היא פונקציה שמקבלת שורה ומחזירה את התוכן
-// data: מערך של אובייקטים להצגה
+import React from 'react';
 export default function Table({ columns, data }) {
   return (
     <table className="data-table">

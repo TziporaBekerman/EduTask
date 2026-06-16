@@ -1,10 +1,11 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
-export default function Layout({ links }) {
+export default function Layout({ links, setUser }) {
     const navigate = useNavigate();
 
     const handleLogout = () => {
         localStorage.removeItem("token");
+        setUser(null);
         navigate("/login");
     };
 

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { getAllAssignments, createAssignment, updateAssignment, deleteAssignment } from "../../API/assignmentsApi";
-import { getAllGroups, getMyGroups } from "../../API/groupsApi";
+import { getGroups } from "../../API/groupsApi";
 import { getAllUsers } from "../../API/usersApi";
-import Table from "../../common/Table";
-import Input from "../../common/Input";
-import Errors from "../../common/Errors";
+import Table from "../../components/common/Table";
+import Input from "../../components/common/Input";
+import Errors from "../../components/common/Errors";
 
 const emptyForm = { title: "", description: "", groupId: "", lecturerId: "", openDate: "", closeDate: "" };
 
@@ -21,7 +21,7 @@ export default function ManageAssignments() {
 
   useEffect(() => {
     fetchAssignments();
-    isAdmin ? fetchGroups() : fetchMyGroups();
+    fetchGroups();
     if (isAdmin) fetchLecturers();
   }, []);
 
@@ -36,16 +36,7 @@ export default function ManageAssignments() {
 
   const fetchGroups = async () => {
     try {
-      const res = await getAllGroups();
-      setGroups(res.groups);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const fetchMyGroups = async () => {
-    try {
-      const res = await getMyGroups();
+      const res = await getGroups();
       setGroups(res.groups);
     } catch (err) {
       setError(err.message);

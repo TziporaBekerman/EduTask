@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { getMySubmissions } from "../../API/submissionsApi";
 import { useNavigate } from "react-router-dom";
-import Table from "../../common/Table";
-import Errors from "../../common/Errors";
+import Table from "../../components/common/Table";
+import Errors from "../../components/common/Errors";
 
 export default function StudentPending() {
   const [pending, setPending] = useState([]);

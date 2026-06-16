@@ -1,4 +1,4 @@
-import Layout from "../../common/Layout";
+import Layout from "../../components/common/Layout";
 
 const links = [
   { to: "/lecturer/home",        label: "דף הבית" },
@@ -7,6 +7,6 @@ const links = [
   { to: "/lecturer/assignments", label: "ניהול מטלות" },
 ];
 
-export default function LecturerLayout() {
-  return <Layout links={links} />;
+export default function LecturerLayout({ setUser }) {
+  return <Layout links={links} setUser={setUser} />;
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getDashboard } from "../../API/reportsApi";
-import Errors from "../../common/Errors";
+import Errors from "../../components/common/Errors";
 
 export default function AdminHome() {
   const [stats, setStats] = useState(null);
@@ -15,11 +15,8 @@ export default function AdminHome() {
         setError(err.message);
       }
     };
-
     fetchData();
-    const interval = setInterval(fetchData, 30000); // כל 30 שניות
 
-    return () => clearInterval(interval); // ניקוי כשהקומפוננטה נסגרת
   }, []);
 
   if (!stats) return <div className="page"><Errors showError={error} setShowError={setError} />טוען...</div>;

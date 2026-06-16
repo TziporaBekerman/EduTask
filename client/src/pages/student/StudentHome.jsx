@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { getMySubmissions } from "../../API/submissionsApi";
 import { getMyProfile } from "../../API/usersApi";
-import Errors from "../../common/Errors";
+import Errors from "../../components/common/Errors";
+import Table from "../../components/common/Table";
 
 export default function StudentHome() {
   const [submissions, setSubmissions] = useState([]);
@@ -23,26 +24,18 @@ export default function StudentHome() {
 
   const statusLabel = { unsubmitted: "לא הוגש", submitted: "הוגש", checked: "נבדק", late: "באיחור" };
 
+  const columns = [
+    { label: "מטלה", render: (s) => s.assignmentTitle },
+    { label: "סטטוס", render: (s) => statusLabel[s.status] },
+    { label: "ציון", render: (s) => s.grade ?? "-" },
+  ];
+
   return (
     <div className="page">
       <Errors showError={error} setShowError={setError} />
       <h2>שלום, {user?.name || user?.email}</h2>
-
       <h3>סטטוס הגשות אחרונות</h3>
-      <table className="data-table">
-        <thead>
-          <tr><th>מטלה</th><th>סטטוס</th><th>ציון</th></tr>
-        </thead>
-        <tbody>
-          {submissions.slice(0, 5).map((s) => (
-            <tr key={s.id}>
-              <td>{s.assignmentTitle}</td>
-              <td>{statusLabel[s.status]}</td>
-              <td>{s.grade ?? "-"}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table columns={columns} data={submissions.slice(0, 5)} />
     </div>
   );
 }

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { getAllUsers, updateUser, deleteUser } from "../../API/usersApi";
-import { getAllGroups, createGroup, updateGroup, deleteGroup } from "../../API/groupsApi";
-import Modal from "../../common/Modal";
-import Table from "../../common/Table";
-import Errors from "../../common/Errors";
+import { getGroups, createGroup, updateGroup, deleteGroup } from "../../API/groupsApi";
+import Modal from "../../components/common/Modal";
+import Table from "../../components/common/Table";
+import Errors from "../../components/common/Errors";
 
 export default function ManageGroups() {
   const [groups, setGroups] = useState([]);
@@ -19,7 +19,7 @@ export default function ManageGroups() {
 
   const fetchGroups = async () => {
     try {
-      const res = await getAllGroups();
+      const res = await getGroups();
       setGroups(res.groups);
     } catch (err) {
       setError(err.message);

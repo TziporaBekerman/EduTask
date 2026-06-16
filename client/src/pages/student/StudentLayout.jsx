@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import Layout from "../../common/Layout";
+import Layout from "../../components/common/Layout";
 
 const links = [
   { to: "/student/home", label: "דף הבית" },
@@ -9,6 +9,6 @@ const links = [
   { to: "/student/profile", label: "פרופיל" }
 ];
 
-export default function StudentLayout() {
-    return <Layout links={links} />;
+export default function StudentLayout({ setUser }) {
+    return <Layout links={links} setUser={setUser} />;
 }

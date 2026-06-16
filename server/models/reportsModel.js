@@ -1,6 +1,5 @@
 const db = require("../database/db");
 
-// הגשות של תלמיד לפי ID
 const getSubmissionsByStudent = async (studentId) => {
   const [rows] = await db.query(
     `SELECT s.*, a.title AS assignmentTitle
@@ -12,7 +11,6 @@ const getSubmissionsByStudent = async (studentId) => {
   return rows;
 };
 
-// הגשות של מטלה לפי ID
 const getSubmissionsByAssignment = async (assignmentId) => {
   const [rows] = await db.query(
     `SELECT s.*, u.name AS studentName
@@ -24,7 +22,6 @@ const getSubmissionsByAssignment = async (assignmentId) => {
   return rows;
 };
 
-// הגשות של כל תלמידי קבוצה לפי groupId
 const getSubmissionsByGroup = async (groupId) => {
   const [rows] = await db.query(
     `SELECT s.*, u.name AS studentName, a.title AS assignmentTitle
@@ -37,7 +34,6 @@ const getSubmissionsByGroup = async (groupId) => {
   return rows;
 };
 
-// בדיקה אם תלמיד שייך למרצה (דרך קבוצה ומטלה)
 const isStudentOfLecturer = async (lecturerId, groupId) => {
   const [rows] = await db.query(
     `SELECT COUNT(*) AS count FROM Assignments
@@ -47,7 +43,6 @@ const isStudentOfLecturer = async (lecturerId, groupId) => {
   return rows[0].count > 0;
 };
 
-// בדיקה אם מטלה שייכת למרצה
 const getAssignmentByIdForLecturer = async (assignmentId) => {
   const [rows] = await db.query(
     "SELECT id, lecturerId FROM Assignments WHERE id = ?",
@@ -56,7 +51,6 @@ const getAssignmentByIdForLecturer = async (assignmentId) => {
   return rows[0] || null;
 };
 
-// נתוני dashboard - כל הסטטיסטיקות בשאילתה אחת
 const getDashboardStats = async () => {
   const [[userStats]] = await db.query(
     `SELECT

@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { getAllSubmissions, gradeSubmission } from "../../API/submissionsApi";
 import { getAllUsers } from "../../API/usersApi";
 import { getAllAssignments } from "../../API/assignmentsApi";
-import Table from "../../common/Table";
-import Errors from "../../common/Errors";
+import Table from "../../components/common/Table";
+import Errors from "../../components/common/Errors";
 
 export default function ManageSubmissions() {
   const [submissions, setSubmissions] = useState([]);
