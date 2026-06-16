@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getMySubmissions } from "../../API/submissionsApi";
+import { getMyPendingAssignments } from "../../API/submissionsApi";
 import { useNavigate } from "react-router-dom";
 import Table from "../../components/common/Table";
 import Errors from "../../components/common/Errors";
@@ -12,8 +12,8 @@ export default function StudentPending() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const s = await getMySubmissions();
-        setPending(s.submissions.filter((sub) => sub.status === "unsubmitted"));
+        const s = await getMyPendingAssignments();
+        setPending(s.assignments || []);
       } catch (err) {
         setError(err.message);
       }

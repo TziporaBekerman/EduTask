@@ -229,3 +229,95 @@ button:hover { background: #2563eb; }
   color: #64748b;
   margin-top: 8px;
 }
+
+/* Assignment Details */
+.assignment-header { margin-bottom: 20px; }
+.assignment-description { color: #475569; margin-top: 8px; font-size: 15px; line-height: 1.6; }
+
+.assignment-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 24px;
+}
+
+.meta-item { display: flex; flex-direction: column; gap: 4px; }
+.meta-label { font-size: 12px; color: #94a3b8; text-transform: uppercase; }
+.meta-value { font-size: 15px; color: #1e293b; font-weight: 500; }
+.meta-value.late { color: #ef4444; }
+
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.status-submitted { background: #dbeafe; color: #1d4ed8; }
+.status-checked   { background: #dcfce7; color: #15803d; }
+.status-late      { background: #fee2e2; color: #dc2626; }
+.status-unsubmitted { background: #f1f5f9; color: #64748b; }
+
+.late-notice {
+  background: #fee2e2;
+  border-right: 4px solid #ef4444;
+  padding: 14px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #dc2626;
+}
+.late-notice a { color: #dc2626; font-weight: 600; }
+
+.assignment-actions { display: flex; gap: 10px; margin-bottom: 20px; }
+
+.submission-file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.submission-file a { color: #3b82f6; font-weight: 500; }
+
+.feedback-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 24px;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 600px;
+}
+.feedback-grade {
+  font-size: 48px;
+  font-weight: bold;
+  color: #3b82f6;
+  text-align: center;
+}
+
+/* Drop Zone */
+.drop-zone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  color: #64748b;
+  transition: border-color 0.2s, background 0.2s;
+}
+.drop-zone:hover { border-color: #3b82f6; background: #eff6ff; }
+.drop-zone.dragging { border-color: #3b82f6; background: #eff6ff; }

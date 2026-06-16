@@ -102,29 +102,58 @@ export default function AssignmentDetails() {
 
   return (
     <div className="page">
-      <h2>{assignment.title}</h2>
-      <p>{assignment.description}</p>
-      <p>תאריך סגירה: {assignment.closeDate?.slice(0, 16).replace("T", " ")}</p>
+      <div className="assignment-header">
+        <h2>{assignment.title}</h2>
+        <p className="assignment-description">{assignment.description}</p>
+      </div>
 
-      {submission && <p>סטטוס: {statusLabel[submission.status]}</p>}
+      <div className="assignment-meta">
+        <div className="meta-item">
+          <span className="meta-label">תאריך סגירה</span>
+          <span className="meta-value">{assignment.closeDate?.slice(0, 16).replace("T", " ")}</span>
+        </div>
+        {submission && (
+          <div className="meta-item">
+            <span className="meta-label">סטטוס</span>
+            <span className={`status-badge status-${submission.status}`}>{statusLabel[submission.status]}</span>
+          </div>
+        )}
+        <div className="meta-item">
+          {isLate ? (
+            <>
+              <span className="meta-label">איחור</span>
+              <span className="meta-value late">{getTimeDiff(assignment.closeDate)}</span>
+            </>
+          ) : (
+            <>
+              <span className="meta-label">זמן שנותר</span>
+              <span className="meta-value">{getTimeDiff(assignment.closeDate)}</span>
+            </>
+          )}
+        </div>
+      </div>
 
-      {isLate ? (
-        <div className="form-error">
+      {isLate && (
+        <div className="late-notice">
           <p>הינך באיחור של {getTimeDiff(assignment.closeDate)}</p>
           <p>אם יש לאיחורך סיבה מוצדקת פנה למרצה: <a href={`mailto:${assignment.lecturerEmail}`}>{assignment.lecturerEmail}</a></p>
         </div>
-      ) : (
-        <p>זמן שנותר: {getTimeDiff(assignment.closeDate)}</p>
       )}
 
-      {!isLate && (
-        <button onClick={() => setShowUpload(!showUpload)}>
-          {submission ? "עדכון הגשה" : "להוספת הגשה"}
-        </button>
-      )}
+      <div className="assignment-actions">
+        {!isLate && (
+          <button onClick={() => setShowUpload(!showUpload)}>
+            {submission ? "עדכון הגשה" : "להוספת הגשה"}
+          </button>
+        )}
+        {submission && (
+          <button onClick={() => setShowComment(!showComment)}>הוסף הערה</button>
+        )}
+      </div>
 
       {showUpload && (
         <form className="data-form" onSubmit={handleSubmitFile}>
+          <h3>{submission ? "עדכון קובץ" : "העלאת קובץ"}</h3>
           <div
             className={`drop-zone ${dragging ? "dragging" : ""}`}
             onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
@@ -142,30 +171,36 @@ export default function AssignmentDetails() {
         </form>
       )}
 
-      {submission && (
-        <>
-          {submission.filePath && (
-            <a href={`http://localhost:5000/${submission.filePath}`} target="_blank" rel="noreferrer">צפה בקובץ שהוגש</a>
-          )}
-          <br />
-          <button onClick={() => setShowComment(!showComment)}>הוסף הערה</button>
-          {showComment && (
-            <div className="data-form">
-              <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="הערה למרצה" />
-              <div className="form-actions">
-                <button onClick={handleSaveComment}>שמור הערה</button>
-                <button onClick={() => setShowComment(false)}>ביטול</button>
-              </div>
-            </div>
-          )}
-        </>
+      {showComment && (
+        <div className="data-form">
+          <h3>הערה למרצה</h3>
+          <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="כתוב הערה..." />
+          <div className="form-actions">
+            <button onClick={handleSaveComment}>שמור הערה</button>
+            <button onClick={() => setShowComment(false)}>ביטול</button>
+          </div>
+        </div>
+      )}
+
+      {submission?.filePath && (
+        <div className="submission-file">
+          <span>קובץ שהוגש:</span>
+          <a href={`http://localhost:5000/${submission.filePath}`} target="_blank" rel="noreferrer">צפה בקובץ</a>
+        </div>
+      )}
+
+      {submission?.studentComment && (
+        <div className="data-form">
+          <span className="meta-label">הערתך:</span>
+          <p>{submission.studentComment}</p>
+        </div>
       )}
 
       {submission?.status === "checked" && (
-        <div className="data-form">
+        <div className="feedback-card">
           <h3>משוב מרצה</h3>
-          <p>ציון: {submission.grade}</p>
-          <p>הערה: {submission.lecturerComment || "-"}</p>
+          <div className="feedback-grade">{submission.grade}</div>
+          <p className="meta-label">הערה: {submission.lecturerComment || "-"}</p>
         </div>
       )}
 

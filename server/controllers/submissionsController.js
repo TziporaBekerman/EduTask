@@ -33,6 +33,16 @@ const getSubmissionById = async (req, res, next) => {
   }
 };
 
+const getMyPendingAssignments = async (req, res) => {
+  try {
+    const assignments = await submissionModel.getPendingAssignmentsByStudent(req.user.id);
+    return res.status(200).json({ success: true, assignments });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 const getMySubmissions = async (req, res, next) => {
   try {
     const submissions = await submissionModel.getSubmissionsByStudent(req.user.id);
@@ -143,6 +153,6 @@ const getSubmissionsByAssignment = async (req, res, next) => {
 };
 
 module.exports = {
-  getAllSubmissions, getSubmissionById, getMySubmissions, createSubmission,
+  getAllSubmissions, getSubmissionById, getMySubmissions, getMyPendingAssignments, createSubmission,
   updateSubmission, deleteSubmission, gradeSubmission, getSubmissionsByStudent, getSubmissionsByAssignment
 };

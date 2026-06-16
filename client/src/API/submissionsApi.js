@@ -6,4 +6,5 @@ export const gradeSubmission = (id, data) => putForm(`/submissions/${id}/grade`,
 export const deleteSubmission = (id) => del(`/submissions/${id}`);
 export const createSubmission = (formData) => postForm("/submissions", formData);
 export const getMySubmissions = () => get("/submissions/my");
+export const getMyPendingAssignments = () => get("/submissions/my/pending");
 export const updateSubmission = (id, formData) => putForm(`/submissions/${id}`, formData);

@@ -117,6 +117,17 @@ const updateSubmission = async (id, data) => {
   return await getSubmissionById(id);
 };
 
+const getPendingAssignmentsByStudent = async (studentId) => {
+  const [rows] = await db.query(
+    `SELECT a.* FROM Assignments a
+     JOIN Users u ON u.groupId = a.groupId
+     WHERE u.id = ?
+     AND a.id NOT IN (SELECT assignmentId FROM Submissions WHERE studentId = ?)`,
+    [studentId, studentId]
+  );
+  return rows;
+};
+
 const getSubmissionsByLecturer = async (lecturerId) => {
   const [rows] = await db.query(
     `SELECT s.* FROM Submissions s
@@ -134,6 +145,7 @@ module.exports = {
   getSubmissionsByStudent,
   getSubmissionsByAssignment,
   getSubmissionsByLecturer,
+  getPendingAssignmentsByStudent,
   gradeSubmission,
   deleteSubmission,
   updateSubmission

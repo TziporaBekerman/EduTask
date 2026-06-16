@@ -12,6 +12,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.get("/", verifyToken, authorizeRole("admin", "lecturer"), submissionController.getAllSubmissions);
 router.get("/my", verifyToken, authorizeRole("student"), submissionController.getMySubmissions);
+router.get("/my/pending", verifyToken, authorizeRole("student"), submissionController.getMyPendingAssignments);
 router.get("/:id", verifyToken, authorizeRole("admin", "lecturer"), submissionController.getSubmissionById);
 router.post("/", verifyToken, authorizeRole("student"), upload.single("file"), submissionController.createSubmission);
 router.put("/:id/grade", verifyToken, authorizeRole("admin", "lecturer"), submissionController.gradeSubmission);
